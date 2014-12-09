@@ -1,0 +1,259 @@
+﻿@{
+    ViewBag.Title = "物流跟踪";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>物流跟踪</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+        html {
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <script src="~/Scripts/js/jquery.min.js"></script>
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/js/kendo.all.min.js"></script>
+    <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+
+
+</head>
+<body>
+    <div data-role="view" id="tabstrip-profile" data-layout="mobile-tabstrip">
+        <h3 id="actionResult"></h3>
+        <ul data-role="listview" data-source="TransportSource" data-template="inboxItem" class="inboxList"></ul>
+    </div>
+
+    <script id="inboxItem" type="script/x-kendo-template">
+
+        <p ><b>物流名称：</b>#: Distribution_Name#</p>
+        <p><b>物流描述：</b>#: Distribution_Content# </p>
+        <p><b>发货地址：</b>#: Source_Addr# </p>
+        <p><b> 收货地址：</b>#: Destination_Addr# </p>
+        <p><b>发货数量：</b>#: Distribution_Amount#</p>
+         # if(Distribution_State == 0){
+               var state = "物流已生成";
+            } else if(Distribution_State == 1){
+                state = "已发货";
+            }  else if (Distribution_State == 2){
+                state = "已收货";
+            }
+            #
+        <p><b>物流状态：</b>#: state#</p>
+        <p><b>订单生成时间：</b>#:Created_Time#</p>
+        <p><b>订单发出时间：</b>#:Send_Time#</p>
+        <p><b>收货时间：</b>#: Receive_Time  #</p>
+
+        # if(Distribution_State == 0 && category == 1){#
+            <a id  = "changeState" class="reply"  name = "changeState" data-role="button" target="_self"  data-click="changeState" value="1"> 点击发货</a>
+         # } else if (Distribution_State == 1 && category == 0){#
+                <a id= "deliveryGoods" name = "deliveryGoods" class="reply" data-role="button"   data-click="deliveryGoods" value="2">确认收货</a>
+         #}#
+
+        <a  id = "orderDownLoad"
+           class="reply"
+           data-role="button"
+        @*href="#:Distribution_Download_Addr#"*@
+        @*target="_self"*@
+          data-click="distributionDownload"
+        @*data-actionsheet-context="#: Distribution_Download_Addr#"*@
+        > 订单下载</a>
+
+
+    </script>
+
+    <script>
+        // $(document).ready(function () {
+        String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
+            var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
+            var r = this.substr(this.indexOf("\?") + 1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+        var str = location.search;  //获取当前页面url？后面的数值
+        var distributionId = str.GetValue("option");
+        var category = str.GetValue("category");
+
+        //console.info(select);
+        var TransportSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    type: "POST",
+                    url: "/Transportation/GetTransportDetails",
+                    data:
+                        {
+                            distributionId: distributionId,
+                            //category: category,
+                        },
+                    dataType: "json"
+                }
+            },
+        });
+        //console.info(TransportSource);
+        //alert(TransportSource.);
+
+        function distributionDownload(e) {
+            //$("#actionResult").html("Download address #" + e.context);
+            $("#actionResult").click(
+                //function () {
+                    alert("asdfasdfasdfasd")
+                //}
+                );
+        }
+
+        function deliveryGoods(e) {       //确认收货
+            $("#deliveryGoods").click(
+                $.ajax({
+                    url: "/Transportation/changeTransportState",
+                    method: "POST",
+                    data: {
+                        state: 2,
+                        distributionId: select
+                    },
+                    error: function (request) {
+                        alert("Connection error");
+                    },
+                    success: function (msg) {
+                        //console.info(msg);
+                        window.location.href = '/Transportation/showAddSuccess?msg=' + msg;
+                        //alert(msg);
+                    }
+                }
+                )
+                );
+        }
+
+
+        function changeState(e) {  //开始发货
+            $("#changeState").click(
+                //function (e) {
+                //alert("#changeState".valueOf())
+                $.ajax({
+                    url: "/Transportation/changeTransportState",
+                    method: "POST",
+                    data: {
+                        state: 1,
+                        distributionId: select
+                    },
+                    error: function (request) {
+                        alert("Connection error");
+                    },
+                    success: function (msg) {
+                        //console.info(msg);
+                        window.location.href = '/Transportation/showAddSuccess?msg=' + msg;
+                        // window.open('/Transportation');
+                        // javascript: location.href = '/Transportation';
+                        // location.reload();
+                        //alert(msg);
+                    }
+                })
+           // }
+            );
+        }
+        // });
+    </script>
+    <!--<script id="invoiceDetailsTemp" type="script/x-kendo-template">
+        <p>承运单位：#:express#</p>
+        <p> 物流编号：#: invoiceNumber#</p>
+        <p> 发货方：#: consignor# </p>
+        <p> 物流状态：#: status# </p>
+    </script>
+
+    <script>
+        function mobileListViewLocalFiltering() {
+            var dataSource = new kendo.data.DataSource({
+                data: invoiceData
+            });
+
+            $("#invoiceInfo").kendoMobileListView({
+                dataSource: dataSource,
+                template: $("#invoiceDetailsTemp").text(),
+                virtualViewSize: 100,
+                endlessScroll: true
+            });
+        }
+
+        var invoiceData = [
+        {
+            express: "**快递",
+            invoiceNumber: "20141031001",
+            consignor: "中国海洋石油总公司",
+            status: "已签收",
+        }
+        ];
+    </script>-->
+
+    <script>
+        function onClick(e) {
+            //window.location.href = '/OrderDemo.html';
+            //window.open('/OrderDemo.html'); //在新的标签页打开链接
+            window.location.replace("/OrderDemo.html");
+        }
+    </script>
+
+    <style scoped>
+        .reply {
+            float: left;
+            margin: 0.5em 2.5em 0.5em 0.7em;
+        }
+
+        #tabstrip-profile h2 {
+            display: inline-block;
+            font-size: 1.1em;
+            margin: 1.5em 0 0 .7em;
+        }
+
+            #tabstrip-profile h2 span {
+                display: block;
+                clear: both;
+                font-size: 1.8em;
+                margin: .1em 0 0 0;
+            }
+
+        #tabstrip-profile img {
+            width: 5em;
+            height: 5em;
+            float: left;
+            margin: 1em;
+            border: 1px solid rgba(0,0,0,.2);
+            -webkit-border-radius: 4em;
+            border-radius: 4em;
+        }
+
+        .sales-down,
+        .sales-hold,
+        .sales-up,
+        .value {
+            float: right;
+        }
+
+        .sales-up {
+            color: green;
+        }
+
+        .sales-down {
+            color: red;
+        }
+
+        .sales-hold {
+            color: blue;
+        }
+
+        .value {
+            color: #bbb;
+        }
+    </style>
+    <script>
+        //var app = new kendo.mobile.Application(document.body,
+        // {
+        //     platform: 'IOS'
+        // });
+        window.kendoMobileApplication = new kendo.mobile.Application(document.body);
+    </script>
+</body>
+</html>

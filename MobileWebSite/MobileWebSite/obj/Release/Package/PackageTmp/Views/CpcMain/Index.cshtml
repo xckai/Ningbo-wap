@@ -1,0 +1,211 @@
+﻿@{  
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+   
+    <style>html { font-size: 12px; font-family: Arial, Helvetica, sans-serif; }</style>
+    <title></title>
+    <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+    
+   @* <script src="~/Scripts/js/kendo.all.min.js"></script>*@
+    <script src="~/Scripts/js/jquery.min.js"></script>
+    <script src="~/Scripts/js/kendo.all.min.js"></script>
+     <script src="~/Scripts/angular.min.js"></script>
+    <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+   
+   
+   
+
+</head>
+    <script>
+        var navbar;
+        var app;
+        $(function () {
+           
+            app = new kendo.mobile.Application($(document.body), {
+                skin: "ios7",
+                layout: "drawer-layout",
+                initial: "/../CpcMainHome/CpcMainHome"
+
+            });
+        });
+        
+        //window.onload = function () {
+           
+        //    var height1 = document.body.scrollHeight;
+        //    $("#myIframe").attr("Height", height1 - 30);
+        //    $("#myIframe").attr("src", "/../CpcMainHome/CpcMainHome");
+           
+
+        //    navbar = app.view()
+        //            .header
+        //            .find(".km-navbar")
+        //            .data("kendoMobileNavBar");
+
+
+        //    // alert(document.getElementById("drawer-myIframe").g6etAttribute("data-title"));
+        //    //$("#drawer-myIframe").attr("data-title", "发出的订单（已完成）");
+        //    //$("#myiframe").kendoAttribution({ data-title: "hehe"  });
+
+
+        //}
+
+
+
+
+        
+</script>
+<body>
+    <div data-role="view" id="drawer-myIframe"  data-title="@ViewBag.Name" >
+       @* <div id="temp"></div>
+  <iframe id="myIframe" src=" " height ="100%" width="100%" frameborder=”no” border=”0″ marginwidth=”0″ marginheight=”0″></iframe>*@
+</div>
+
+
+
+<div data-role="drawer" id="my-drawer" style="width: 230px;  data-views="['drawer-myIframe', 'drawer-sendorder', 'drawer-sendordercomplete','drawer-sendordernotcomplete','drawer-receiveorder', 'drawer-receiveordercomplete','drawer-receiveordernotcomplete','drawer-sendtranslation','drawer-sendtranslationcompelete','drawer-sendtranslationnotcomplete','drawer-receivetranslation','drawer-receivetranslationcompelete','drawer-receivetranslationnotcomplete']">
+    <ul data-role="listview" data-type="group" style="">
+        <li>
+            <ul>
+                   <table width="223" border="0" >
+                      <tr>
+                        <td width="70" ><img src="/../CpcMain/get_Enlogo" width="70" height="70"  alt="" style="border-radius:10px"/></td>
+                        <td width="122" height="70">
+                            <h4 style="line-height:1px;margin-bottom:7px;color:rgb(0, 0, 0)">用户ID:@ViewBag.ID</h4>
+                            <h3 style="color:#808080;margin-top:1px">@ViewBag.Name</h3>
+                             
+                        </td>
+                      </tr>
+                      
+                    </table>
+                
+                <li data-icon="star"><a href="/../CpcMainHome/CpcMainHome" data-transition="none">回到首页</a></li>
+                </ul>
+        </li>
+        <li>订单管理
+            <ul>
+                
+                <li data-icon="star" ><a href="/../OrderDemo/Index?category=0" data-transition="none">发出的订单</a></li>
+                <li data-icon="compose"><a href="/../OrderDemo/Index?category=1" data-transition="none">接受的订单</a></li>
+               
+            </ul>
+        </li>
+        <li>物流管理
+            <ul>
+                <li data-icon="sent"><a href="/../Transportation/AddTransportList" data-transition="none">我要发货</a></li>
+                <li data-icon="sent"><a href="#drawer-myIframe" data-transition="none">发货信息查看</a></li>
+                <li data-icon="trash"><a href="#drawer-myIframe" data-transition="none">收货信息查看</a></li>
+               
+            </ul>
+        </li>
+       
+    </ul>
+</div>
+
+<div data-role="layout" data-id="drawer-layout">
+    <header data-role="header">
+        <div data-role="navbar" style="background-color:#efeff4">
+            <a data-role="button" data-rel="drawer" href="#my-drawer" data-icon="drawer-button" data-align="left"></a>
+            <span data-role="view-title" ></span>
+           
+            @*<a data-align="right" data-role="button" class="nav-button" href="#my-drawer">Index</a>*@
+        </div>
+    </header>
+</div>
+
+<script>
+    // reset global drawer instance, for demo purposes
+    kendo.mobile.ui.Drawer.current = null;
+</script>
+
+<style>
+  
+    #my-drawer .km-list {
+         background-color: #fff;
+    }
+    #my-drawer .km-content
+
+   
+    {
+        background-color: #efeff4;
+        color: #fff;
+    }
+    #my-drawer .km-group-title {
+        
+        
+    color: rgb(0, 0, 0);
+}
+
+    .km-drawer-button:before, .km-drawer-button:after  { content: "\E077"; }
+    .km-inbox:before, .km-inbox:after { content: "\E0B0"; }
+    .km-sent:before, .km-sent:after { content: "\E0C6"; }
+    .km-trash:before, .km-trash:after { content: "\E0C3"; }
+    .km-spam:before, .km-spam:after { content: "\E0C5"; }
+    .km-star:before, .km-star:after { content: "\E0D7"; }
+    .km-settings:before, .km-settings:after { content: "\E0DA"; }
+    .km-off:before, .km-off:after { content: "\E0B9"; }
+
+    .inboxList
+    {
+        font-size: 2.8em;
+    }
+
+    .inboxList p,
+    .inboxList h2,
+    .inboxList h3
+    {
+        margin: 5px 2px;
+    }
+
+    .inboxList p,
+    .inboxList h3
+    {
+        color: #777;
+    }
+
+    .inboxList h3.time
+    {
+        color: #369;
+        float: left;
+        margin-right: 10px;
+    }
+
+    #drawer-spam .spam
+    {
+        color: darkred;
+        background: currentcolor;
+        display: block;
+        margin: 2em;
+        font-size: 1.4em;
+    }
+
+    #drawer-spam .spam .km-text
+    {
+        color: white;
+    }
+</style>
+
+
+<script>
+
+ 
+    
+   
+
+    //function onAfterHide(e) {
+    //    console.log(e);
+    //    document.getElementById("drawer-myIframe").setAttribute("data-title", "发出的订单（已完成）");
+    //}
+</script>
+</body>
+</html>
+
+

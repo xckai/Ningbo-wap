@@ -1,0 +1,56 @@
+﻿#actionsheet-view .km-content {
+            background: #efeff4;
+        }
+#actionsheet-view .km-listview h1,
+ #actionsheet-view .km-listview h2,
+#actionsheet-view .km-listview h3,
+#actionsheet-view .km-listview h4,
+#actionsheet-view .km-listview h5{
+            color:#000;
+            font-stretch:normal;
+            font-style:normal;
+            
+
+
+        }
+
+ .reply {
+            float: right;
+            margin-right:10px;
+        }
+
+
+.item {
+   
+       
+        background-color:#fff;
+        width:100%;
+        border-radius:20px;
+         padding:5px 5px 7px 7px ;
+         
+  
+        }
+  .item-inside {
+           
+           width:95%;
+           height:35px;
+            margin:5px 10px 10px 7px ;  
+            
+            border-bottom:2px solid #efeff4;
+           
+           background-color:#fff;
+          
+        
+        
+ }
+
+ .item-inside p1 {
+    
+    float:left;
+    color:#808080;
+    font-size:16px;
+    font-style:normal;
+    margin-top:5px;
+    margin-left:8px;
+    }
+    

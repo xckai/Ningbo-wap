@@ -1,0 +1,335 @@
+﻿@{
+    ViewBag.Title = "添加物流信息";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div id="main_div" data-role="view" data-title="添加物流信息">
+    <div id="addTransportList" data-layout="mobile-tabstrip">
+
+        <div id="tabstrip-profile" class="wrapper">
+            <form @*action=""*@ style="border:0px" method="post" id="transportForm" enctype="multipart/form-data">
+                <fieldset>
+                    <div class="form-wrap">
+                        <div class="label">
+                            <h4>物流名称：</h4>
+                            <input id="distributionName" class="input long " type="text" name="distributionName" placeholder="物流名称" value="" />
+                        </div>
+                        <div class="label">
+                            <h4>订单号：</h4>
+                            <input id="orderID" class="input long" type="text" name="orderID" placeholder="订单号" value="" />
+                        </div>
+                        <div class="label">
+                            <h4>收货公司：</h4>
+                            <input id="consignee" class="input long" type="text" name="consignee" placeholder="收货单位" value="" />
+                        </div>
+                        <div class="label">
+                            <h4>发货地址：</h4>
+                            <input id="sourceAddress" class="input long" type="text" name="sourceAddress" placeholder="发货地址" />
+                        </div>
+                        <div class="label">
+                            <h4>收货地址：</h4>
+                            <input id="distributionAddress" class="input long" type="text" name="distributionAddress" placeholder="收货地址" />
+                        </div>
+                        <div class="label">
+                            <h4>发货数量：</h4>
+                            <input id="distributionAmount" class="input long" type="text" name="distributionAmount" placeholder="发货数量" value="0" />
+                        </div>
+                        <div class="label">
+                            <h4>物流描述：</h4>
+                            <textarea id="distributionContent" class="input long" cols="40" rows="8" name="distributionContent" placeholder="物流描述"></textarea>
+                        </div>
+                        <div class="label">
+                            <h4>物流状态：</h4>
+                            <input id="distributionState" class="input long" type="text" name="distributionState" placeholder="物流状态" value="0" />
+                        </div>
+                        <div class="label">
+                            <h4>物流生成时间：</h4>
+                            <input id="createdTime" class="input long" type="text" name="createdTime" placeholder="物流生成时间" />
+                        </div>
+                        <div class="label">
+                            <h4>物流发出时间：</h4>
+                            <input id="sendTime" class="input long" type="text" name="sendTime" placeholder="物流发出时间" />
+                        </div>
+                        <div class="submitAndReset">
+                            <div id="infoSubmit" class="more-btn more-btn-no-pd">
+                                <a id="submitButton" data-role="button" href="javascript:;" @*onclick="submitform()"*@>提交</a>
+                            </div>
+                            <div id="infoReset" class="more-btn more-btn-no-pd">
+                                <a data-role="button" href="javascript:;" onclick="document.getElementById('transportForm').reset()">重置</a>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                //传递公司号码
+                //向后台传递当前公司的id
+                //var ProviderEnterpriseID = 10001; //当前登录公司的id，根据当前id来显示未配送的订单
+                var getOrderIDByProviEnterp = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            //type: "POST",
+                            url: "/Transportation/GetOrderID",
+                            //data: {
+                                //ProviderEnterpriseID: ProviderEnterpriseID
+                           // },
+                           // dataType: "json"
+                        }
+                    },
+                });
+                //console.info(getOrderIDByProviEnterp);
+                //从后台获取当前商户未完成配送的订单号的下拉列表
+                // create DropDownList from input HTML element
+                $("#orderID").kendoDropDownList({
+                    dataTextField: "publisherEnterpriseNameAndOrderId",  //订单商户以及订单号
+                    dataValueField: "orderID",  //订单号（订单表的id）
+                    dataSource: getOrderIDByProviEnterp,
+                    index: 0
+                });
+
+                $("#consignee").kendoAutoComplete({
+                    dataTextField: "publisherEnterpriseName", //这个字段会用在搜索建议时。
+                    filter: "contains",   //设置过滤器，这个筛选方法用于决定当前值的建议，默认值是"startswith"，另外还有endswith 和 contains.
+                    minLength: 1, //用户在执行搜索之前就必须键入元素的最小值，如果搜索结果匹配值太多，可以将值设置高一点（大于1）
+                    placeholder: "请输入收货公司。", //当提示为空时会显示占位符，默认情况下无设置。
+                    suggest: true, //如果设置为true，组件会自动使用第一个建议作为它的值。
+                    dataSource: getOrderIDByProviEnterp,
+                    //dataSource: {
+                    //    type: "json",
+                    //    serverFiltering: true,
+                    //    transport: {
+                    //        read: "/Transportation/GetOrderID"
+                    //    }
+                    //}
+                });
+
+                /*物流创建时间*/
+                $("#createdTime").kendoDateTimePicker({
+                    value: new Date(),
+                    culture: "zh-CN",
+                    format: "yyyy年MM月dd日 HH:mm"
+                });
+
+                /*货物发出时间*/
+                $("#sendTime").kendoDateTimePicker({
+                    value: new Date(),
+                    culture: "zh-CN",
+                    format: "yyyy年MM月dd日 HH:mm"
+                });
+
+                /*物流状态，配送单生成状态0，配送状态1代表发货未接收，2代表接收方已经接收*/
+                var distributionStateData = [
+                       { text: "物流已生成", value: "0" },
+                       { text: "物流已发出", value: "1" }
+                ];
+
+                // create DropDownList from input HTML element
+                $("#distributionState").kendoDropDownList({
+                    dataTextField: "text",
+                    dataValueField: "value",
+                    dataSource: distributionStateData,
+                    index: 0
+                });
+
+                /*发货数量*/
+                $("#distributionAmount").kendoNumericTextBox({
+                    //min: 1
+                });
+
+                /*表单数据提交*/
+                $("#submitButton").click(
+                    function submitform() {
+
+                        var distributionName = $.trim($("#distributionName").val());
+                        var consignee = $.trim($("#consignee").val());
+                        var distributionAddress = $.trim($("#distributionAddress").val());
+                        var distributionAmount = $.trim($("#distributionAmount").val());
+                        var distributionContent = $.trim($("#distributionContent").val());
+                        var createdTime = $.trim($("#createdTime").val());
+                        var sendTime = $.trim($("#sendTime").val());
+                        if (distributionName == "") {
+                            document.getElementById("distributionName").placeholder = "请先输入物流名称";
+                            document.getElementById("distributionName").style = "color:red";
+                            //quickTips("distributionName", "请先输入物流名称");
+                            return;
+                        }
+                        if (consignee == "") {
+                            document.getElementById("consignee").placeeholder = "请输入收货公司";
+                            //quickTips("consignee", "请输入收货公司");
+                            return;
+                        }
+                        if (distributionAddress == "") {
+                            document.getElementById("distributionAddress").placeeholder = "请输入收货地址";
+                            //quickTips("distributionAddress", "请输入收货地址");
+                            return;
+                        }
+                        if (distributionAmount == "") {
+                            document.getElementById("distributionAmount").placeeholder = "请输入发货数量";
+                            //quickTips("distributionAmount", "请输入发货数量");
+                            return;
+                        }
+                        if (distributionContent == "") {
+                            document.getElementById("distributionContent").placeeholder = "请输入物流描述信息";
+                            //quickTips("distributionContent", "请输入物流描述信息");
+                            return;
+                        }
+                        if (createdTime == "") {
+                            document.getElementById("createdTime").placeeholder = "请选择时间";
+                            //quickTips("createdTime", "请选择时间");
+                            return;
+                        }
+                        if (sendTime == "") {
+                            document.getElementById("sendTime").placeeholder = "请选择发货时间";
+                           // quickTips("sendTime", "请选择发货时间");
+                            return;
+                        }
+
+                        //alert($('#transportForm').serialize());
+                        $.ajax({
+                            url: "/Transportation/addTransportInforToDatabase",
+                            method: "POST",
+                            data: $('#transportForm').serialize(),
+
+                            error: function (request) {
+                                console.info(request);
+                                alert("Connection error");
+                            },
+                            success: function (msg) {
+                                //console.info(msg);
+                                //$('#chat').getKendoAttribution("data-source", "msg");
+                                //  $('#chat').attr("data-source", "msg");
+                                // $('#chat').data("TransportSource2",msg);
+                                window.location.href = '/Transportation/showAddSuccess?msg=' + msg;
+                                //alert(msg);
+                            }
+                        });
+                    });
+            });
+
+        </script>
+
+        <style scoped>
+            h4 {
+                
+                margin: 5px 0px 8px 10px;
+            }
+
+            .wrapper {
+                min-width: 300px;
+                padding: 0 10px;
+                overflow: hidden;
+                position: relative;
+                background-color:#efeff4;
+            }
+
+            .form-wrap .input {
+                width: 100%;
+                height: 36px;
+                line-height: 1;
+                float: left;
+                padding: 0 10px;
+                border: 1.5px solid #d4d4d4;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                font-size: 16px;
+                color: #666;
+            }
+
+            .form-wrap .long {
+                width: 99%;
+            }
+
+            .form-wrap .input-error {
+                border: 1px solid #cc0000;
+            }
+
+            .form-wrap .label {
+                width: 100%;
+                margin: 15px 0;
+                display: block;
+                overflow: hidden;
+            }
+
+                .form-wrap .label em {
+                    width: 20%;
+                    height: 44px;
+                    float: right;
+                    display: block;
+                    cursor: pointer;
+                    background: #1a7cd2 url(images/icon_form.png) center -64px no-repeat;
+                }
+
+                .form-wrap .label b {
+                    float: left;
+                    line-height: 2em;
+                    color: #666;
+                    font-weight: normal;
+                }
+
+            .submitAndReset {
+                width: 100%;
+                float: left;
+            }
+
+            .more-btn {
+                border-width: 1px;
+                border-color: #83FF60;
+                padding: 0 10px;
+                margin: 10px 0;
+                overflow: hidden;
+            }
+
+                .more-btn a {
+                    /*width: 100%;*/
+                    height: 45px;
+                    line-height: 45px;
+                    display: block;
+                    border: 1px solid #1a7cd2;
+                    border-radius: 8px;
+                    text-align: center;
+                    font-size: 16px;
+                    color: #0094ff;
+                    background: white;
+                    text-decoration: none;
+                    /* background:#1a7cd2;*/
+                }
+
+                    .more-btn a:active {
+                        text-decoration: underline;
+                        background: #1a7cd2;
+                    }
+
+            .more-btn-no-pd {
+                padding: 0px;
+            }
+
+            #infoSubmit {
+                width: 45%;
+                float: left;
+            }
+
+            #infoReset {
+                width: 45%;
+                float: right;
+            }
+
+            .transportList {
+                width: 320px;
+                height: 26px;
+                line-height: 14px;
+                vertical-align: middle;
+                text-align: center;
+                font-family: "Microsoft Yahei";
+                font-size: 16px;
+            }
+        </style>
+    </div>
+
+</body>
+</html>

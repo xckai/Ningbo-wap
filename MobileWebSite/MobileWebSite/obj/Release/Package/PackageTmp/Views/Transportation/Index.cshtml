@@ -1,0 +1,281 @@
+﻿@{
+    ViewBag.Title = "物流详情";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>物流详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+        html {
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <script src="~/Scripts/js/jquery.min.js"></script>
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/js/kendo.all.min.js"></script>
+    <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div data-id="actionsheet-view" data-role="view" data-layout="Transport">
+        @*<ul id="filterable-listview"></ul>*@
+        @*<div>
+                <div style="width: 120px; position: absolute;">
+                    <input type="button" />
+                </div>
+                <div style="margin-left: 120px;">
+                    <input type="text" style="width: 100%;" />
+                </div>
+            </div>*@
+
+        <form id="searchForm" action="" method="post">
+            @*<fieldset>*@
+            @*<select id="selectItem">
+                    <option value="XXXX">商家</option>
+                    <option value="YYYY">状态</option>
+                    <option value="ZZZZ">订单号</option>
+                </select>
+                <input id="searchText" type="text">
+                <a id="modalview-search-button" data-role="button" onclick="closeModalViewLogin()">搜索</a>*@
+            <ul style="list-style-type:none">
+                <li >
+                    <div>
+                       
+                            <input type="text" id="search_input" name="search">
+                            <div id="searchbutton"></div>
+                        
+                    </div>
+                </li>
+            </ul>
+            @*</fieldset>*@
+        </form>
+        @*<ul id="filterable-listview"></ul>*@
+        <ul data-role="listview" data-source="TransportSource" data-template="transportItem" class="inboxList"></ul>
+    </div>
+
+    <script id="transportItem" type="script/x-kendo-template">
+    <h3 > 物流编号：#: TransportNumber#</h3>
+    <h2> 发货方：#: consignor# </h2>
+    <h2> 收货方：#: consignee# </h2>
+    <a class="reply" data-role="button" onclick=logisticsContent(#:distributionId#)> 物流详情 </a>
+    <p> 物流状态：#: status# </p>
+    @*<input id = "userID" type = "hidden" value="@ViewBag.ID">用户ID:@ViewBag.ID</input>*@
+    </script>
+
+    <script>
+        String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
+            var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
+            var r = this.substr(this.indexOf("\?") + 1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+        var str = location.search;  //获取当前页面url？后面的数值
+        var category = str.GetValue("category")
+        //var userID = Session["userId"].ToString().Trim();
+        //console.info( @ViewBag.ID);
+       // var userID = document.getElementById("userID").valueOf;
+       // console.info(userID);
+        var TransportSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    type: "POST",
+                    url: "/Transportation/GetTransportList",
+                    data:
+                        {
+                           // enterpriseID: 10001,
+                            category: category,
+                            transportState: 0,
+                        },
+                    dataType: "json"
+                }
+
+                //read: {
+                //    type: "POST",
+                //    url: "/Transportation/GetTransportDetails",
+                //    data:
+                //        {
+                //            distributionId: select
+                //        },
+                //    dataType: "json"
+                //}
+            },
+        });
+
+        //$("#filterable-listview").kendoMobileListView({
+        //    dataSource: TransportSource,
+        //    template: $("#transportItem").text(),
+        //    filterable: {
+        //        field: "consignor",
+        //        operator: "startswith"
+        //    },
+        //    virtualViewSize: 100,
+        //    endlessScroll: true
+        //});
+
+        function logisticsContent(distributionId1) {
+            //alert("物流详情");
+            //window.location.replace("/OrderDemo.html"); //
+            //window.location = '/OrderDemo.html';
+            //window.location.href = '/OrderDemo.html';
+            //javascript: location.href = '/OrderDemo.html';
+            var urlbase = "/Transportation/TransportDetails?option=";
+            urlbase += distributionId1;
+            //urlbase = urlbase + "&userID=" + 10001;
+            urlbase += "&category=" + category;
+            window.open(urlbase); //在新的标签页打开链接
+            //window.open("");
+        }
+    </script>
+    <style scoped>
+        .reply {
+            float: right;
+        }
+
+        .inboxList {
+            font-size: .8em;
+        }
+
+        #searchForm {
+            margin: auto;
+            width: 99%;
+            height: auto;
+            background: rgb(250, 250, 250);
+        }
+        /*
+        #selectItem {
+            margin: 15px 2px 10px;
+            float: left;
+            display: block;
+            height: 26px;
+            line-height: 14px;
+            width: 15%;
+            vertical-align: middle;
+            padding: 5px;
+        }
+
+        #searchText {
+            margin: 15px 2px 10px;
+            float: left;
+            display: block;
+            height: 26px;
+            line-height: 14px;
+            width: 60%;
+            vertical-align: middle;
+            border: 1px solid #e7e7e7;
+            padding: 5px;
+        }
+
+        #modalview-search-button {
+            margin: 15px 2px 20px;
+            float: left;
+            display: block;
+            height: 26px;
+            line-height: 14px;
+            width: 20%;
+            text-align: center;
+            font-weight: bold;
+            background-color: #015991;
+            color: #ffffff;
+        }*/
+
+        .inboxList p,
+        .inboxList h2,
+        .inboxList h3 {
+            margin: 5px 2px;
+        }
+
+        .inboxList p,
+        .inboxList h3 {
+            color: #777;
+        }
+
+            .inboxList h3.time {
+                color: #369;
+                float: left;
+                margin-right: 10px;
+            }
+
+        #searchout {
+            width: 960px;
+            height: 50px;
+            margin: 0 auto;
+            padding-left: 100px;
+            position: relative;
+            /* background: red;*/
+        }
+
+        #searchform {
+            width: 1060px;
+            /*width:auto;*/
+            height: 43px;
+            margin: 10px auto 0;
+            float: left;
+        }
+
+        #search_input {
+            width: 880px;
+            /*width:auto;*/
+            height: 34px;
+            float: left;
+            padding-left: 8px;
+            border: transparent solid 1px;
+            border-left: none;
+            border-right: none;
+            outline: 0;
+            background-color: rgba(213, 213, 213, 0.4);
+            font-family: "微软雅黑";
+            font-size: 17px;
+            color: #464646;
+            /*position: relative;*/
+            z-index: 1;
+        }
+
+        #searchbutton {
+            width: 29px;
+            height: 34px;
+            float: left;
+            border: transparent solid 2px;
+            border-left: none;
+            background-color: rgba(223, 223, 223, 0.4);
+            background-image: url('../../Content/themes/base/images/a.png');
+            background-size: 70%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+            #searchbutton:hover {
+                background-color: rgba(213, 213, 213, 0.6);
+            }
+
+            #searchbutton:active {
+                background-color: rgba(213, 213, 213, 0.4);
+            }
+    </style>
+
+    <script>
+        var app = new kendo.mobile.Application(document.body,
+        {
+            platform: 'IOS'
+        });
+    </script>
+
+    @*<div data-role="layout" data-id="Transport">
+            <header data-role="header">
+                <div data-role="navbar">物流详情</div>
+            </header>
+
+            <footer data-role="footer">
+                <div data-role="tabstrip">
+                    <a data-icon="home" href="#home"></a>
+                </div>
+            </footer>
+        </div>*@
+
+
+</body>
+</html>

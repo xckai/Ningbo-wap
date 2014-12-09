@@ -1,0 +1,409 @@
+﻿@{
+    ViewBag.Title = "OrderDetails";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>订单详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="~/Scripts/js/jquery.min.js"></script>
+
+    <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/js/kendo.all.min.js"></script>
+    <link href="~/Content/themes/website-searchbox.css" rel="stylesheet" />
+    <link href="~/Content/themes/div-item.css" rel="stylesheet" />
+
+    <script>
+        //select是所选订单的id
+        var select = location.search.substr(1).split('&')[0].split('=')[1];
+        console.info(select);
+        //var select = GetRequest();
+        var TransportSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    type: "POST",
+                    url: "/OrderDemo/OrderDetails",
+                    data:
+                        {
+                            option: select
+                        },
+                    dataType: "json"
+                }
+            },
+        });
+        var TransportSource2 = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    type: "POST",
+                    url: "/OrderDemo/OrderChat",
+                }
+            },
+        });
+        function changeStatus()
+        {
+            $.ajax({
+                url: "/../OrderDemo/changeStatus",
+                method:"POST",
+                data:
+                    {
+                        option:select
+                    },
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (msg)
+                {
+                    var strhtml="订单进度";
+                    console.info(msg);
+                    $.get("/../OrderDemo/OrderStatusChange", { option: select },
+                       function (result) {
+                           var total=result.total-1;
+                            for (var i = 0; i < total; i++) {
+                                strhtml += '<div  sytle="background:#32CD32" class="footer1"> <span style="float:left">' + result.rows[i].orderTime + ':--' + result.rows[i].statusContent + '</span></div><br>';
+                            }
+                            document.getElementById("statusPro").innerHTML = strhtml;
+                            console.info(result.rows[total].statusContent);
+                           //点击合同签订
+                            if (result.rows[total - 1].status == 1)
+                            {
+                                document.getElementById("button1").value = result.rows[total].statusContent;
+                            }
+                           
+                           //点击完正在生产
+                            if(result.rows[total-1].status==2)
+                            {
+                                document.getElementById("button1").value = result.rows[total].statusContent;
+                                document.getElementById("button2").style.display = "";
+                                document.getElementById("button3").style.display = "";
+                            }
+                           //点击完生产完成
+                            if (result.rows[total - 1].status == 3)
+                            {
+                                document.getElementById("button1").value = result.rows[total].statusContent;
+                                document.getElementById("button2").style.display = "";
+                                document.getElementById("button3").style.display = "";
+                            }
+                           //点击完配送完成
+                            if (result.rows[total - 1].status == 4)
+                            {
+                                document.getElementById("button1").value = result.rows[total].statusContent;
+                                document.getElementById("button1").style.display = "none";
+                                document.getElementById("button2").style.display = "none";
+                            }
+                           //点击全部签收
+                            if (result.rows[total - 1].status == 5)
+                            {
+                                document.getElementById("button4").style.display = "none";
+                                document.getElementById("button5").style.display = "none";
+                                document.getElementById("button6").style.display = "";
+                            }
+                           
+                       });
+                   
+                }
+                });
+         }
+           
+        function checkDis()
+        {
+            var category= location.search.substr(1).split('&')[1].split('=')[1];
+            console.info(select);
+          
+            window.open("/Transportation/TransportDetails?option="+select+"&category="+category);
+                //});
+
+        }
+        function distribution()
+        {
+            var category = location.search.substr(1).split('&')[1].split('=')[1];
+            window.open("/Transportation/AddTransportList?option=" + select + "&category=" + category);
+        }
+        function submitform() {
+                $.ajax({
+                    url: "/../OrderDemo/AddChat",
+                  //  dataType: "JSON",
+                    method: "POST",
+                    data: $('#chatContent').serialize(),
+                    error: function (request) {
+                        alert("Connection error");
+                    },
+                    success: function (msg) {
+                        console.info(msg);
+                        var strhtml="订单回复";
+                        $.get("/OrderDemo/OrderChat2", function (result) {
+                            console.info(result);
+                            for (var i = 0; i < result.total; i++)
+                            {
+                      
+                                strhtml += '<div  sytle="background:#32CD32" class="footer1"> <span style="float:left">' + result.rows[i].charSender + ':--' + result.rows[i].chatContent + '</span><span style="float:right">回复时间：' + result.rows[i].chatTime + '</span></div><br>';
+                            }
+                            console.info(strhtml);
+                            document.getElementById("chat").innerHTML = strhtml;
+                        });
+                      
+                      //  location.reload();
+
+                       // alert(msg);
+                    }
+                });
+        }
+    </script>
+
+    <script id="inboxItem2" type="script/x-kendo-template">
+        <p> #: orderContent#</p>
+    </script>
+  
+    <style scoped>
+        .reply {
+            float: right;
+        }
+
+        #tabstrip-profile h2 {
+            display: inline-block;
+            font-size: 1.1em;
+            margin: 1.5em 0 0 .7em;
+        }
+
+            #tabstrip-profile h2 span {
+                display: block;
+                clear: both;
+                font-size: 1.8em;
+                margin: .1em 0 0 0;
+            }
+
+        #tabstrip-profile img {
+            width: 5em;
+            height: 5em;
+            float: left;
+            margin: 1em;
+            border: 1px solid rgba(0,0,0,.2);
+            -webkit-border-radius: 4em;
+            border-radius: 4em;
+        }
+
+        .sales-down,
+        .sales-hold,
+        .sales-up,
+        .value {
+            float: right;
+        }
+
+        .sales-up {
+            color: green;
+        }
+
+        .sales-down {
+            color: red;
+        }
+
+        .sales-hold {
+            color: blue;
+        }
+
+        .value {
+            color: #bbb;
+        }
+
+        .scroller-content {
+            font-weight: normal;
+            height: 130px;
+            margin: 15px 0;
+            background-color: rgba(0, 0, 0, 0.07);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45) inset;
+        }
+    </style>
+    <style>
+        html {
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div data-role="view" id="actionsheet-view" data-layout="mobile-tabstrip">
+        <table style="width:100%" border="0" cellspacing="0" cellpadding="0">
+            <tbody>
+                <tr>
+                    <td height="300" style="width:50%">
+                        <div class="item">
+                            <div data-source="TransportSource" class="itemdetail-inside">
+                                <h3 style="color: #777">订单号：  @ViewBag.OrderNum</h3>
+                            </div>
+                            <h3 style ="padding-left:8px">订单名称： @ViewBag.OrderName</h3>
+                           
+                             @if (ViewBag.Category == 0)
+                            {       
+
+                             <h3 style="padding-left:8px">承接方: @ViewBag.OrderSupplier</h3>
+                            }
+                             else
+                             {
+                                <h3 style="padding-left:8px">发布方: @ViewBag.OrderSupplier</h3>
+                             }
+                                   
+                      
+                          </div>
+                        <div class="item">
+                            <div class="itemdes-inside">
+                                <h3 style="padding-left:8px">订单描述</h3>
+                            
+                                <div style="padding-left:24px">  @ViewBag.OrderContent</div>
+                                </div>
+                                <div class="itembutton-inside">
+                                    <br><input id="button" style=" height: 30px; width: 100px; " onclick="OrderDownload()" value="订单下载" data-role="button" name=" OrderDownload">
+                                </div>
+                            </div>
+                        <div class="item">
+                            <table style="width:100%" border="0" cellspacing="0" cellpadding="0">
+                                <tbody>
+                                    <tr>
+                                        <th height="50"><h3 style=" margin: 5px 2px; ">订单进度</h3></th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <ul id="statusPro">
+                                                @foreach (var sta in ViewBag.templist)
+                                                {
+                                                    <li>
+                                                        @sta.orderTime
+                                                        @sta.statusContent
+                                                    </li>
+                                                }
+                                            </ul>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                            <div id="buttons" class="item">
+                                <div class="itembutton-inside">
+                                @if (ViewBag.Category == 1)
+                                {
+                                    <br><input id="button1"style="width:110px" onclick="changeStatus()" value=@ViewBag.NextSta data-role="button" name=" Status">
+                                    <input id="button2"  onclick="distribution()" value="配送" data-role="button" name=" Status" style="width: 110px;display:none">
+                                    <input id="button3"  onclick="checkDis()" value="查看配送单" data-role="button" name=" Status" style="width: 110px;display:none">
+
+                                    if (ViewBag.NextSta == "客户全部签收")
+                                    {
+                                        <script>
+                                            document.getElementById("button1").style.display = "none";
+                                            document.getElementById("button3").style.display = "";
+                                        </script>
+                                    }
+                                    if (ViewBag.NextSta == "订单生产完成" || ViewBag.NextSta == "配送完成")
+                                    {
+                                        <script>
+                                            document.getElementById("button2").style.display = "";
+                                            document.getElementById("button3").style.display = "";
+                                        </script>
+                                    }
+                                    if (ViewBag.NextSta == "客户已评论")
+                                    {
+                                        <script>
+                                            document.getElementById("button1").value = "评价发布方";
+                                            document.getElementById("button2").style.display = "none";
+                                            document.getElementById("button3").style.display = "none";
+                                        </script>
+                                    }
+                                }
+                                else
+                                {
+                                    <br><input id="button4" style="width:110px" onclick="checkDis()" value="查看配送单" data-role="button" name=" checkDis">
+                                    <input id="button5"  onclick="changeStatus()" value="全部签收" data-role="button" name=" ReciveOrder" style="width: 110px;display:none">
+                                    <input id="button6"  onclick="changeStatus()" value="评价承接方" data-role="button" name=" Comment" style="width: 110px;display:none">
+
+                                    if (ViewBag.NextSta == "客户已评论")
+                                    {
+                                        <script>
+                                            document.getElementById("button4").style.display = "none";
+                                            document.getElementById("button5").style.display = "none";
+                                            document.getElementById("button6").style.display = "";
+                                        </script>
+                                    }
+                                    if (ViewBag.NextSta == "客户全部签收")
+                                    {
+                                        <script>
+                                            document.getElementById("button5"), style.display = "";
+                                        </script>
+                                    }
+
+                                }
+                            </div>
+                                </div>
+</td>
+                </tr>
+            </tbody>
+        </table>
+        
+            <div>
+                <form method="post" id="chatContent" enctype="multipart/form-data">
+                    <div align="center">
+                        <textarea name="comment"
+                                  cols="20" rows="4" id="comment_text"></textarea>
+                        <br><input id="button2" onclick="submitform()" value="评论" data-role="button" name=" Comment">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+        @*<div data-role="view" id="tabstrip-profile" data-layout="mobile-tabstrip">
+                <div>
+                    <ul data-role="listview" data-source="TransportSource" data-template="inboxItem" class="inboxList"></ul>
+                </div>
+                <h2>订单描述</h2>
+                <div data-role="scroller">
+                    <ul class=" scroller-content" data-role="listview" data-source="TransportSource" data-template="inboxItem2"></ul>
+                </div>
+            </div>
+            <h2>对话：</h2>
+            <div data-role="scroller" id="chat">
+               <ul id="chat"  data-role="listview"  data-source="TransportSource2" data-template="inboxItem3"></ul>
+                <script>
+                    var strhtml = "订单回复";
+                    $.get("/OrderDemo/OrderChat2", function (result) {
+
+                        for (var i = 0; i < result.total; i++) {
+
+                            strhtml += '<div  sytle="background:#32CD32" class="footer1"> <span style="float:left">' + result.rows[i].charSender + ':--' + result.rows[i].chatContent + '</span><span style="float:right">回复时间：' + result.rows[i].chatTime + '</span></div><br>';
+                        }
+                        console.info(strhtml);
+                        document.getElementById("chat").innerHTML = strhtml;
+                    });
+                </script>
+            </div>
+            <div>
+                <form method="post" id="chatContent" enctype="multipart/form-data">
+                    <div align="center">
+                        <textarea name="comment"
+                                  cols="20" rows="4" id="comment_text"></textarea>
+                        <br><input id="button" onclick="submitform()" value="评论" data-role="button" name=" Comment">
+                    </div>
+                </form>
+            </div>*@
+
+        <script>
+            window.kendoMobileApplication = new kendo.mobile.Application(document.body);
+        </script>
+
+</body>
+</html>

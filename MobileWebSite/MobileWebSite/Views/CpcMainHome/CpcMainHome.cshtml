@@ -1,0 +1,131 @@
+﻿@{
+      Layout = null;
+    
+}
+@* 说明：自己的sytle 在body内部，kendo的样式引用都不需要再添加（自己定义的css文件需要添加引用）
+不要直接更改共有标签的属性比如H1 H2 等，需要更改的请使用Id选择器选择后在子属性中更改比如
+#Home-div H1 等
+body内包含一层 <div id="Home" data-role="view" data-title="我的首页" >
+ id随意，data-title 为该页的标题data-role不要更改
+所有页面都不要使用layout   设置Layout = null;*@
+<html>
+   
+   
+   <body>
+       <style>
+
+#Home-div {
+            background-color:#efeff4;
+            height:100%;
+            
+        }
+        #Name-table {
+        
+         background-color:#efeff4;
+         margin-left:2%;
+         
+         
+        }
+        .item {
+       
+        margin-top:10px;
+        margin-left:2%;
+        
+        margin-top:5px;
+        margin-bottom:10px;
+        width:96%;
+        background-color:#fff;
+         border-radius:10px;
+         
+         
+        }
+        .item-inside {
+           border-bottom:1px solid #e2dddd;
+           margin-bottom:0px;
+           margin-top:1px;
+           margin-right:5px;
+           margin-left:5px;
+            
+           
+           background-color:#fff;
+           padding-bottom:10px;
+           padding-top:2px;
+        
+        
+        }
+      
+       
+     
+
+    </style>
+    <script>
+        
+
+
+    </script>
+   
+        <div id="Home" data-role="view" data-title="我的首页" >
+                <div id="Home-div"> 
+            <table  border="0" id="Name-table" >
+                      <tr>
+                        <td ><img src="/../CpcMain/get_Enlogo" style="border-radius:10px" width="70" height="70"  alt=""/></td>
+                        <td>
+                            <h4 style="margin-top:10%;margin-bottom:7px;padding-top:3px;">@ViewBag.Name</h4>
+                            <h3 style="color:#808080;margin-top:1px">@ViewBag.UserName</h3>
+                             
+                        </td>
+                      </tr>
+                      
+                    </table>
+                    
+            <div class="item" > 
+                <div class="item-inside">
+                <h3 style="color:#e2dddd;padding-top:10px;line-height:1px">订单信息</h3>
+                 </div>
+                <div class="item-inside">
+                    <span style="font-size:medium;">您发出的订单有 @ViewBag.sendordernum 条还未完成
+                    
+                     <a id="sendorder"  data-role="button" href="/../Transportation/AddTransportList"   style="font-size:8px;clear:right;float:right;margin-right:10px" >点击查看</a>  
+                    </span>
+                    <br />
+                    <div style="margin-top:10px;margin-bottom:5px">
+                    <span style="font-size:medium;">您接受的订单有 @ViewBag.getordernum 条还未完成</span>
+                     <a id="receiveorder" href="/../Transportation/AddTransportList" data-role="button"   style="font-size:8px;clear:right;float:right;margin-right:10px" >点击查看</a>  
+                    </div>
+                   
+                   
+                    </div>
+                
+                </div>
+            <div class="item" >
+                <div class="item-inside">
+                <h3 style="color:#e2dddd;padding-top:10px;line-height:1px">物流信息</h3>
+                 </div>
+                <div class="item-inside">
+                    <span style="font-size:medium;">您发出的货物有 @ViewBag.sendtransporationnum 条还未被确认收货
+                    <a id="sendtranslation" href="/../Transportation/AddTransportList" data-role="button"   style="font-size:8px;clear:right;float:right;margin-right:10px" >点击查看</a>  
+                       
+                    </span>
+                    <br />
+                    <div style="margin-top:10px;margin-bottom:5px">
+                    <span style="font-size:medium;">您接受的货物有 @ViewBag.gettransporationnum 条未确认收货</span>
+                    <a id="receivetranslation" href="/../Transportation/AddTransportList" data-role="button"   style="font-size:8px;clear:right;float:right;margin-right:10px" >点击查看</a>  
+                    </div>
+                   
+                   
+                    </div>
+                
+                </div>
+            
+
+            
+                
+                <span style="margin-top:50px;margin-bottom:40px">&nbsp</span>
+                 
+     </div>
+            </div>
+
+     
+    </body>
+    
+    </html>

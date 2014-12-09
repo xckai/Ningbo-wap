@@ -1,0 +1,233 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic usage</title>
+    <meta charset="unicode-8">
+    <script src="~/Scripts/js/jquery.min.js"></script>
+    <script src="~/Scripts/js/kendo.all.min.js"></script>
+    <script src="~/Scripts/console.js"></script>
+    <script src="~/Scripts/angular.min.js"></script>
+  
+    <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/Kendo/examples/content/shared/styles/examples-offline.css" rel="stylesheet" />
+    <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+       
+
+      <script id="errorTemplate" type="text/x-kendo-template">
+                <div class="wrong-pass">
+                    <img src="/../Kendo/examples/content/web/notification/error-icon.png" />
+                    <h3>#= title #</h3>
+                    <p>#= message #</p>
+                </div>
+
+   </script>
+    <script id="successTemplate" type="text/x-kendo-template">
+                <div class="upload-success">
+                   @* <img src="../content/web/notification/success-icon.png" />*@
+                    <h3>#= message #</h3>
+                </div>
+            </script>
+    
+   <script>
+
+      
+      
+       function checkuser() {
+          
+           var notification = $("#notification").kendoNotification({
+               position: {
+                   pinned: true,
+                   top: 30,
+                   right: 0
+               },
+               autoHideAfter: 3000,
+               stacking: "down",
+               templates: [{
+                   type: "error",
+                   template: $("#errorTemplate").html()
+               }, {
+                   type: "upload-success",
+                   template: $("#successTemplate").html()
+               }]
+
+           }).data("kendoNotification");
+          
+           $.post("/../CpcMain/Logincheckuser",
+                       {
+                           enId:$("#enid").val(),
+                           userId: $("#username").val(),
+                           password: $("#password").val()
+
+
+                              
+                      },
+                      function(data,status){
+                          if (status = "success") {
+                              // alert(data.reason);
+                             
+                              if (data.checkresult == '0') {
+                                  notification.show({
+                                      title: "无法登陆",
+                                      message: data.reason
+                                  }, "error");
+                                  $("#modalview-login").kendoMobileModalView("close");
+                              }
+                              else {
+                                  window.location.href="/../CpcMain/Index";
+                                  //alert(data.checkresult);
+                                  
+                              }
+
+                          }
+                          else {
+                              notification.show({
+                                  title: "无法登陆",
+                                  message: "无法连接服务器"
+                              }, "error");
+                          }
+                      });
+
+       }
+
+       function closeModalViewLogin() {
+           $("#modalview-login").kendoMobileModalView("close");
+       }
+</script>
+    
+    
+</head>
+<body>
+    
+      
+    <span id="notification" style="display:none;"></span>
+    <div data-role="view" id="modalview-camera" data-title="HTML5 Camera">
+    <img src="/../Kendo/examples/content/mobile/modalview/lens.png" /><br />
+    <a data-role="button" data-rel="modalview" href="#modalview-login" id="modalview-open-button">Login</a>
+</div>
+
+<div data-role="modalview" id="modalview-login" style="width: 90%;">
+    <div data-role="header">
+        <div data-role="navbar">
+            <span>登录</span>
+            <a data-click="closeModalViewLogin" data-role="button" data-align="right">取消</a>
+        </div>
+    </div>
+
+    <ul data-role="listview" data-style="inset">
+		<li><label for="enid">公司ID: <input type="text" id="enid" /></label></li>
+        <li><label for="username">用户ID: <input type="text" id="username" /></label></li>
+        <li><label for="password">密码: <input type="password" id="password" /></label></li>
+    </ul>
+    <a data-click="checkuser" id="modalview-login-button" type="button" data-role="button">登录</a>
+   
+</div>
+
+
+<style scoped>
+    #modalview-login-button,
+    #modalview-reg-button,
+    #modalview-open-button {
+        display: block;
+        text-align: center;
+        margin: .6em .8em;
+        font-size: 1.2em;
+    }
+
+    #modalview-open-button {
+        margin: 0 3em;
+        padding: .5em;
+    }
+    .km-flat #modalview-open-button {
+        color: #fff;
+    }
+
+    #modalview-camera {
+        text-align: center;
+    }
+
+    #modalview-camera img {
+        display: block;
+        margin:    auto;
+    }
+
+    #modalview-camera .km-content,
+    .km-ios #modalview-login .km-content {
+        background: url(/../Kendo/examples/content/shared/images/patterns/pattern1.png) repeat 0 0;
+    }
+
+    #modalview-login label {
+        display: inline-block;
+        width: 100%;
+    }
+    .km-ios #modalview-camera .km-button,
+    .km-ios #modalview-login .km-button,
+    .km-ios #modalview-camera .km-navbar,
+    .km-ios #modalview-login .km-header,
+    .km-blackberry #modalview-camera .km-navbar,
+    .km-blackberry #modalview-login .km-navbar
+    {
+        background-color: #000;
+    }
+
+    .km-blackberry #modalview-camera .km-button
+    {
+        color: #fff;
+    }
+
+    .km-ios #modalview-camera .km-button:active,
+    .km-ios #modalview-camera .km-state-active,
+    .km-ios #modalview-login .km-button:active,
+    .km-ios #modalview-login .km-state-active {
+        background-color: #2e2e2e;
+    }
+
+    .km-ios #modalview-login #modalview-login-button,
+    .km-flat #modalview-login #modalview-login-button {
+        background-color: Green;
+        color: #fff;
+    }
+
+    .km-tablet .km-ios #modalview-camera .km-view-title,
+    .km-tablet .km-ios #modalview-login .km-view-title {
+        color: #fff;
+        text-shadow: 0 -1px rgba(0,0,0,.5);
+    }
+    .k-notification-error.k-group {
+                    background: rgba(100%,0%,0%,.7);
+                    color: #ffffff;
+                }
+    .wrong-pass {
+                    width: 300px;
+                    height: 100px;
+                }
+                .wrong-pass h3 {
+                    font-size: 1em;
+                    padding: 32px 10px 5px;
+                }
+  .wrong-pass img {
+                    float: left;
+                    margin: 30px 15px 30px 30px;
+                }
+
+</style>
+
+
+
+    
+    <script>
+        window.kendoMobileApplication = new  kendo.mobile.Application($(document.body), {
+            platform: "ios7"
+        });
+    </script>
+    
+    
+</body>
+</html>

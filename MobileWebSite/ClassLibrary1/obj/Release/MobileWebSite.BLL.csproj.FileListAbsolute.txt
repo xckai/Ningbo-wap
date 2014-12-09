@@ -1,0 +1,16 @@
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\MobileWebSite.BLL.dll.config
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\MobileWebSite.BLL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\MobileWebSite.BLL.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\CPCApp.Data.DAL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\CPCApp.DATA.IDAL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\CPCApp.Data.Model.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\EntityFramework.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\EntityFramework.SqlServer.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\CPCApp.Data.DAL.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\CPCApp.DATA.IDAL.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\CPCApp.Data.Model.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\EntityFramework.xml
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Release\EntityFramework.SqlServer.xml
+F:\Projects\MobileWebSite\ClassLibrary1\obj\Release\MobileWebSite.BLL.csprojResolveAssemblyReference.cache
+F:\Projects\MobileWebSite\ClassLibrary1\obj\Release\MobileWebSite.BLL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\obj\Release\MobileWebSite.BLL.pdb

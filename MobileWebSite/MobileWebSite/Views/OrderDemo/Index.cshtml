@@ -1,0 +1,194 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<html>
+<body>
+
+    <div data-role="view" data-title="发出的订单" id="actionsheet-view" data-init="mobileListViewLocalFiltering">
+
+        @* <ul id="filterable-listview"></ul>*@
+        <div id="myheader" style="margin-top:2px">
+            <input id="status" style="width:35%;height:25px;" placeholder="Select status..." />
+            <form id="searchForm" action="" method="post">
+                <div style="list-style-type:none">
+                    <div id="searchout">
+                        <div>
+                            <div id="searchform">
+                                <input type="text" id="search_input" name="search">
+                                <div id="searchbutton" onclick="mysearch()"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*</fieldset>*@
+            </form>
+            <br />
+        </div>
+        <div style="margin-top:10px">
+            <ul id="listsource" data-role="listview" data-source="mydataSource" data-template="inboxItem" class="inboxList"></ul>
+        </div>
+    </div>
+
+
+    <script type="script/x-kendo-template" id="inboxItem">
+
+        <div class="item">
+            <div class="item-inside">
+              <p1>订单号：#: orderNum #</p1>
+              <a class="reply" data-role="button"  onclick=OrderContent("#:orderID#")
+                  >订单详情</a>
+
+
+              </div>
+
+              #if(category==0)
+              {#
+                  <h4>发布方：#: orderSupplier#</h4>
+              #}else
+              {#
+                  <h4>承接方：#: orderSupplier#</h4>
+               #}#
+
+              <h4>订单状态：#: orderStatus#</h4>
+
+
+              </div>
+    </script>
+
+    <style scoped>
+        .reply {
+            float: right;
+            margin-right: 10px;
+        }
+
+        .inboxList {
+            font-size: .8em;
+        }
+
+        #actionsheet-view .km-listview {
+        }
+
+
+
+        #actionResult {
+            padding: 10px;
+            background: rgba(127,127,127,.5);
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            margin: 0;
+        }
+
+        .km-ios #actionsheet-view .km-navbar {
+            background: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0, rgba(255, 255, 255, 0.5)), color-stop(0.06, rgba(255, 255, 255, 0.45)), color-stop(0.5, rgba(255, 255, 255, 0.2)), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(1, rgba(100, 100, 100, 0))), url(../content/shared/images/patterns/pattern7.png);
+            background: -moz-linear-gradient(center top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.45) 6%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.15) 50%, rgba(100, 100, 100, 0)), url(../content/shared/images/patterns/pattern7.png);
+        }
+
+            .km-ios #actionsheet-view .km-navbar .km-button {
+                background-color: #4A88B5;
+            }
+
+        .km-ios #actionsheet-view .km-content .km-button {
+            background: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0, rgba(255, 255, 255, 0.5)), color-stop(0.06, rgba(255, 255, 255, 0.45)), color-stop(0.5, rgba(255, 255, 255, 0.2)), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(1, rgba(100, 100, 100, 0))), url(../content/shared/images/patterns/pattern1.png);
+            background: -moz-linear-gradient(center top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.45) 6%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.15) 50%, rgba(100, 100, 100, 0)), url(../content/shared/images/patterns/pattern1.png);
+        }
+
+        .km-tablet .km-ios #actionsheet-view .km-view-title {
+            color: #fff;
+            text-shadow: 0 -1px rgba(0,0,0,.5);
+        }
+    </style>
+
+    <script>
+        function OrderContent(orderid) {
+            // alert(orderid);
+            var category = 0;
+            var urlbase = "/OrderDemo/OrderDetails?option=";
+            urlbase += orderid;
+            urlbase += "&category=";
+            urlbase += category;
+            //alert("test");
+            window.location.href = urlbase;
+
+        }
+    </script>
+    <script>
+        function mysearch() {
+
+            mykey = $('#search_input').val();
+            alert(mykey);
+            location.reload();
+
+
+        }
+        $("#status").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: [
+                { text: "合同未签订", value: 0 },
+                { text: "合同已签订", value: 1 },
+                { text: "订单正在生产", value: 2 },
+                { text: "订单生产完成", value: 3 },
+                { text: "配送完成", value: 4 },
+                { text: "客户全部签收", value: 5 },
+                { text: "客户已评论", value: 6 },
+                { text: "全部订单", value: 7 }
+
+            ],
+            select: onSelect,
+            filter: "contains",
+            suggest: true,
+            index: 7
+        });
+        var select = $("#status").data("kendoComboBox");
+        var category = 1;
+        var urlbase = "/OrderDemo/GetOrderList";
+        var mykey;
+
+        //把select的值传到后台
+        function onSelect(e) {
+            select = e.item.index();
+            //mydataSource = new kendo.data.DataSource({
+            //    transport: {
+            //        read: {
+            //            type: "POST",
+            //            url: urlbase,
+            //            data:
+            //                {
+            //                    option: select.value(),
+            //                    category: category
+            //                },
+            //            dataType: "json"
+            //        }
+            //    },
+
+            //});
+            
+            location.reload();
+        }
+        
+     
+        var mydataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    type: "POST",
+                    url: urlbase,
+                    data:
+                        {
+                            option: 7,
+                            category: category,
+                            content: mykey
+                        },
+                    dataType: "json"
+                }
+            },
+
+        });
+
+        new kendo.mobile.Application(document.body);
+       
+    </script>
+</body>
+</html>
+

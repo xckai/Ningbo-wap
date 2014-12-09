@@ -1,0 +1,16 @@
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\MobileWebSite.BLL.dll.config
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\MobileWebSite.BLL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\MobileWebSite.BLL.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\CPCApp.Data.DAL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\CPCApp.DATA.IDAL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\CPCApp.Data.Model.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\EntityFramework.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\EntityFramework.SqlServer.dll
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\CPCApp.Data.DAL.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\CPCApp.DATA.IDAL.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\CPCApp.Data.Model.pdb
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\EntityFramework.xml
+F:\Projects\MobileWebSite\ClassLibrary1\bin\Debug\EntityFramework.SqlServer.xml
+F:\Projects\MobileWebSite\ClassLibrary1\obj\Debug\MobileWebSite.BLL.csprojResolveAssemblyReference.cache
+F:\Projects\MobileWebSite\ClassLibrary1\obj\Debug\MobileWebSite.BLL.dll
+F:\Projects\MobileWebSite\ClassLibrary1\obj\Debug\MobileWebSite.BLL.pdb
