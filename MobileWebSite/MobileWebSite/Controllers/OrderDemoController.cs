@@ -21,15 +21,15 @@ namespace MobileWebSite.Controllers
         //0代表发布方，1代表承接方
         // GET: /OrderDemo/
        // public  int category=0;
-        public ActionResult Index()
+        public ActionResult Index(int category)
         {
-         
+            ViewBag.category = category;
             return View();
         }
         //根据orderid来获取订单详情
-        public ActionResult OrderDetails(int option,int category)
+        public ActionResult OrderDetails(int orderId, int category)
         {
-             var tempList = orderoper.GetOrderDetailByOrderId(category,option);
+            var tempList = orderoper.GetOrderDetailByOrderId(category, orderId);
              ViewBag.OrderNum = tempList[0].orderNum;
              ViewBag.OrderName = tempList[0].orderName;
              ViewBag.OrderSupplier = tempList[0].orderSupplier;
@@ -37,11 +37,12 @@ namespace MobileWebSite.Controllers
              ViewBag.OrderTime = tempList[0].orderTime;
 
              ViewBag.Category = category;
+             ViewBag.OrderId = orderId;
 
 
-             var tempListStatus = orderoper.GetOrderStatus(option);
+             var tempListStatus = orderoper.GetOrderStatus(orderId);
              ViewBag.templist = tempListStatus;
-             var NextStatus = orderoper.GetNextStatus(option);
+             var NextStatus = orderoper.GetNextStatus(orderId);
              ViewBag.NextSta = NextStatus;
 
             return View();
@@ -50,6 +51,8 @@ namespace MobileWebSite.Controllers
      //通过combox查找相应的订单
         public JsonResult GetOrderList(int option,int category,string content)
         {
+            //ViewBag.Category = category;
+            //ViewBag.Select = option;
             int enterpriseID = int.Parse(Session["userId"].ToString().Trim());   //获得当前session中的企业id
             List<GetDatabaseNum> tempList;
             if (content == null)
@@ -58,14 +61,9 @@ namespace MobileWebSite.Controllers
             }
             else
             {
-
              tempList = orderoper.GetOrderBySearch(enterpriseID, option,category, content); 
             }
-         
-
             return Json(tempList, JsonRequestBehavior.AllowGet);
-
-
         }
 
         //通过搜索查找订单
@@ -81,7 +79,7 @@ namespace MobileWebSite.Controllers
 
         public JsonResult OrderDetailed(int option)
         {
-            var tempList = orderoper.GetOrderDetailByOrderId(0,option);
+            var tempList = orderoper.GetOrderDetailByOrderId(0, option);
             return Json(tempList, JsonRequestBehavior.AllowGet);
 
         }
