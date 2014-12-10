@@ -26,15 +26,3 @@ G:\Project\最近\7.7\CPCApp\CPCApp.DATA.IDAL\bin\Release\zh-Hans\EntityFramewor
 G:\Project\最近\7.7\CPCApp\CPCApp.DATA.IDAL\obj\Release\CPCApp.Data.IDAL.csprojResolveAssemblyReference.cache
 G:\Project\最近\7.7\CPCApp\CPCApp.DATA.IDAL\obj\Release\CPCApp.DATA.IDAL.dll
 G:\Project\最近\7.7\CPCApp\CPCApp.DATA.IDAL\obj\Release\CPCApp.DATA.IDAL.pdb
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\CPCApp.DATA.IDAL.dll.config
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\CPCApp.DATA.IDAL.dll
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\CPCApp.DATA.IDAL.pdb
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\CPCApp.Data.Model.dll
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\EntityFramework.dll
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\EntityFramework.SqlServer.dll
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\CPCApp.Data.Model.pdb
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\EntityFramework.xml
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\bin\Release\EntityFramework.SqlServer.xml
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\obj\Release\CPCApp.Data.IDAL.csprojResolveAssemblyReference.cache
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\obj\Release\CPCApp.DATA.IDAL.dll
-F:\Projects\MobileWebSite\CPCApp.DATA.IDAL\obj\Release\CPCApp.DATA.IDAL.pdb

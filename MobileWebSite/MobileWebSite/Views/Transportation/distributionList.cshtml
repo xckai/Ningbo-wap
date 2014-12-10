@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "订单列表";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+@*<head>
+        <title>订单列表</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style>
+            html {
+                font-size: 12px;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        </style>
+        @*<script src="~/Scripts/js/jquery.min.js"></script>
+        <script src="~/Scripts/angular.min.js"></script>
+        <script src="~/Scripts/js/kendo.all.min.js"></script>
+        <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
+        <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
+        <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
+        <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
+        <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+        <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
+        <link href="~/Content/themes/website-searchbox.css" rel="stylesheet" />
+        <link href="~/Content/themes/div-item.css" rel="stylesheet" />
+    </head>*@
+<body>
+    <div id="actionsheet-view" data-role="view" data-title="物流单列表" data-reload="true">
+        <div>
+            <ul id="distruList" class="inboxListDistributionList" data-role="listview" data-source="orderListData" data-endless-scroll="false" data-template="distributionListTemplate"></ul>
+        </div>
+
+        <script id="distributionListTemplate" type="script/x-kendo-template">
+            <div class="item">
+                <div class="item-inside">
+                    <p1> 物流编号：#: TransportNumber#</p1>
+                    <a class="replyDistrubutList" data-role="button" onclick=logisticsContent(#:distributionId#)> 订单详情 </a>
+                </div>
+                # if( category == 0){#
+                    <h4> 发货方：#: consignor# </h4>
+                #} else if( category == 1){#
+                    <h4> 收货方：#: consignee# </h4>
+                #}#
+                <h4> 物流状态：#: status# </h4>
+            </div>
+        </script>
+
+        <script>
+           // location.reload();
+            String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
+                var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
+                var r = this.substr(this.indexOf("\?") + 1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            }
+            //var str = location.search;  //获取当前页面url？后面的数值
+            var str = window.location.href;
+            var orderId = str.GetValue("option")   //获取订单号
+            var category = str.GetValue("category"); //获取商家类型，0代表发布方，1代表承接方
+            orderId = parseInt(orderId);
+
+            var orderListData = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        type: "POST",
+                        url: "/Transportation/GetOrderList",
+                        data:
+                                    {
+                                        orderID: orderId,
+                                    },
+                        dataType: "json"
+                    }
+                },
+            });
+
+
+            console.info(orderId + " 输出 = " + category);
+
+            function logisticsContent(distributionId) {
+                var urlbase = "/../Transportation/TransportDetails?distributionID=";
+                urlbase += distributionId;
+                urlbase += "&category=" + category;
+                kendo.mobile.application.replace(urlbase, "slide");
+               // app.navigate(urlbase,"slide");
+                //location.replace(urlbase); //替换当前标签页
+                console.info(urlbase);
+            }
+        </script>
+    </div>
+
+
+
+    <style scoped>
+        .replyDistrubutList {
+            float: right;
+            margin-right: 10px;
+        }
+
+        .inboxListDistributionList {
+            font-size: .8em;
+        }
+
+            .inboxListDistributionList p,
+            .inboxListDistributionList h2,
+            .inboxListDistributionList h3 {
+                margin: 5px 2px;
+            }
+
+            .inboxListDistributionList p,
+            .inboxListDistributionList h3 {
+                color: #777;
+            }
+
+                .inboxListDistributionList h3.time {
+                    color: #369;
+                    float: left;
+                    margin-right: 10px;
+                }
+    </style>
+</body>
+</html>

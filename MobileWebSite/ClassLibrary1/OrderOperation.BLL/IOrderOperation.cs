@@ -18,10 +18,9 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         //0取得所有list 
         //1取得已完成的订单
         //2取得未完成的订单
-       List< GetOrderDetails> GetOrderDetailByOrderId(int category,int orderId);
+        List<GetOrderDetails> GetOrderDetailByOrderId(int category, int orderId);
         //通过Id获取order的详细信息（包含订单状态，订单的详细信息）
-       List<GetDatabaseNum> GetOrderBySearch(int enterpriseid, int option, int category, string keywords);
-       
+        List<GetDatabaseNum> GetOrderBySearch(int enterpriseid, int option, int category, string keywords);
 
         //取得订单的最近一项状态
         OrderStatus.orderStatusType GetLatestStatus(int orderid);

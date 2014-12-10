@@ -22,13 +22,3 @@ G:\Project\最近\7.7\CPCApp\CPCApp.Data.Model\bin\Release\zh-Hans\EntityFramewo
 G:\Project\最近\7.7\CPCApp\CPCApp.Data.Model\obj\Release\CPCApp.Data.Model.csprojResolveAssemblyReference.cache
 G:\Project\最近\7.7\CPCApp\CPCApp.Data.Model\obj\Release\CPCApp.Data.Model.dll
 G:\Project\最近\7.7\CPCApp\CPCApp.Data.Model\obj\Release\CPCApp.Data.Model.pdb
-F:\Projects\MobileWebSite\CPCApp.Data.Model\bin\Release\CPCApp.Data.Model.dll.config
-F:\Projects\MobileWebSite\CPCApp.Data.Model\bin\Release\CPCApp.Data.Model.dll
-F:\Projects\MobileWebSite\CPCApp.Data.Model\bin\Release\CPCApp.Data.Model.pdb
-F:\Projects\MobileWebSite\CPCApp.Data.Model\bin\Release\EntityFramework.dll
-F:\Projects\MobileWebSite\CPCApp.Data.Model\bin\Release\EntityFramework.SqlServer.dll
-F:\Projects\MobileWebSite\CPCApp.Data.Model\bin\Release\EntityFramework.xml
-F:\Projects\MobileWebSite\CPCApp.Data.Model\bin\Release\EntityFramework.SqlServer.xml
-F:\Projects\MobileWebSite\CPCApp.Data.Model\obj\Release\CPCApp.Data.Model.csprojResolveAssemblyReference.cache
-F:\Projects\MobileWebSite\CPCApp.Data.Model\obj\Release\CPCApp.Data.Model.dll
-F:\Projects\MobileWebSite\CPCApp.Data.Model\obj\Release\CPCApp.Data.Model.pdb

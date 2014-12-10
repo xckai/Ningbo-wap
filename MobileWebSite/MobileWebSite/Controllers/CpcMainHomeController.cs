@@ -27,12 +27,17 @@ namespace MobileWebSite.Controllers
     }
         public ActionResult CpcMainHome()
         {
+            enterpriseId  = int.Parse(Session["enId"].ToString().Trim());   //获得当前session中的企业id      
+            userId = int.Parse(Session["userId"].ToString().Trim());   //获得当前session中的企业id      
             var temporderop = new OrderOperation();
             var temptransop = new Transportation();
-            ViewBag.getordernum = temporderop.GetOrderNum(enterpriseId, 1, 1);
-            ViewBag.sendordernum = temporderop.GetOrderNum(enterpriseId, 0, 1);
-            ViewBag.gettransporationnum = temptransop.GetTransporationNum(enterpriseId, 1, 1);
-            ViewBag.sendtransporationnum = temptransop.GetTransporationNum(enterpriseId, 0, 1);
+            ViewBag.getordernum = temporderop.GetOrderNum(enterpriseId, 1, 0);
+            ViewBag.sendordernum = temporderop.GetOrderNum(enterpriseId, 0, 0);
+            int getTransNum = temptransop.GetTransporationNum(enterpriseId, 1, 0);
+            ViewBag.gettransporationnum = getTransNum;
+            int sendTransNum = temptransop.GetTransporationNum(enterpriseId, 0, 0);
+            ViewBag.sendtransporationnum = sendTransNum;
+
             ViewBag.ID = userId;
             ViewBag.Name = Session["enName"];
             ViewBag.UserName = "小明";

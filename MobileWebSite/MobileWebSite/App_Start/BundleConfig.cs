@@ -18,12 +18,19 @@ namespace MobileWebSite
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*"));
 
+            bundles.Add(new ScriptBundle("~/bundles/kendo").Include(
+                        "~/Scripts/kendo.all.min.js",
+                        "~/Scripts/angular.min.js",
+                        "~/Scripts/js/cultures/kendo.culture.zh-CN.min.js"
+                        ));
+
             // 使用 Modernizr 的开发版本进行开发和了解信息。然后，当你做好
             // 生产准备时，请使用 http://modernizr.com 上的生成工具来仅选择所需的测试。
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/kendo.message.css"));
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",
@@ -39,17 +46,17 @@ namespace MobileWebSite
                         "~/Content/themes/base/jquery.ui.progressbar.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
             bundles.Add(new StyleBundle("~/Kendo/styles/css").Include(
-                   "~/Kendo/styles/kendo.common.min.css",
-                   "~/Kendo/styles/kendo.default.min.css",
-                   "~/Kendo/styles/kendo.dataviz.min.css",
-                   "~/Kendo/styles/kendo.dataviz.default.min.css",
-                   "~/Kendo/styles/kendo.mobile.all.min.css",
-                  "~/Kendo/styles/kendo.rtl.min.css"
-               ));
+                    "~/Kendo/styles/kendo.common.min.css",
+                    "~/Kendo/styles/kendo.default.min.css",
+                    "~/Kendo/styles/kendo.dataviz.min.css",
+                    "~/Kendo/styles/kendo.dataviz.default.min.css",
+                    "~/Kendo/styles/kendo.mobile.all.min.css",
+                   "~/Kendo/styles/kendo.rtl.min.css"
+                ));
+
             BundleTable.Bundles.IgnoreList.Clear();
             BundleTable.Bundles.IgnoreList.Ignore(".min.js", OptimizationMode.Always);
             BundleTable.Bundles.IgnoreList.Ignore(".min.css", OptimizationMode.Always);
         }
-
     }
 }
