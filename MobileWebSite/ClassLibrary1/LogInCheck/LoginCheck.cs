@@ -24,7 +24,7 @@ namespace MobileWebSite.BLL.LogInCheck
         public Checkuserresult CheckUserresult(int enId, int userId, string password)
         {
             Checkuserresult temp_checkuserresult = new Checkuserresult();
-           
+
             UserRepository userRe = new UserRepository();
             try
             {
@@ -34,40 +34,40 @@ namespace MobileWebSite.BLL.LogInCheck
                     temp_checkuserresult.checkresult = 0;
                     temp_checkuserresult.reason = "公司ID或者用户ID无效，请重新输入";
                     return temp_checkuserresult;
-                   
-                   
+
+
                 }
                 else
                 {
-                    if (tempuser.Password==password)
-                    { 
-                        if (tempuser.User_State==true)
+                    if (tempuser.Password == password)
+                    {
+                        if (tempuser.User_State == true)
                         {
                             temp_checkuserresult.checkresult = 1;
                             temp_checkuserresult.reason = "登录成功，跳转中";
-                            
+
                             EnterpriseRepository tempEnRe = new EnterpriseRepository();
                             UserRepository tempuserRe = new UserRepository();
                             try
                             {
                                 temp_checkuserresult.user = tempuserRe.LoadEntities(User => User.User_ID == userId).FirstOrDefault();
-                                temp_checkuserresult.enterprise= tempEnRe.LoadEntities(Enterprise=>Enterprise.Enterprise_ID==enId).FirstOrDefault();
+                                temp_checkuserresult.enterprise = tempEnRe.LoadEntities(Enterprise => Enterprise.Enterprise_ID == enId).FirstOrDefault();
                             }
                             catch (System.Exception ex)
                             {
                                 temp_checkuserresult.enterprise.Enterprise_Name = "服务器异常，无法获取公司名称";
                             }
                             return temp_checkuserresult;
-                           
+
                         }
                         else
                         {
                             temp_checkuserresult.checkresult = 0;
                             temp_checkuserresult.reason = "用户未经过验证，请联系企业管理员";
                             return temp_checkuserresult;
-                           
+
                         }
-                        
+
 
                     }
                     else
@@ -75,10 +75,10 @@ namespace MobileWebSite.BLL.LogInCheck
                         temp_checkuserresult.checkresult = 0;
                         temp_checkuserresult.reason = "密码错误，请重新登录";
                         return temp_checkuserresult;
-                      
-                     
+
+
                     }
-                
+
                 }
             }
             catch (System.Exception ex)
@@ -86,17 +86,17 @@ namespace MobileWebSite.BLL.LogInCheck
                 temp_checkuserresult.checkresult = 0;
                 temp_checkuserresult.reason = "无法连接验证服务器，请联系管理员";
                 return temp_checkuserresult;
-                
-            	
+
+
             }
-           
 
 
 
 
-          
 
-           
+
+
+
 
 
         }

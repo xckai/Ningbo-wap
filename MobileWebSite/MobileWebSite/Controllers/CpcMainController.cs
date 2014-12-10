@@ -68,7 +68,7 @@ namespace MobileWebSite.Controllers
             }
             catch (System.Exception ex)
             {
-                Image originalImage = System.Drawing.Image.FromFile("F:\\360\\GitHub\\MobileWebSite-12-03\\MobileWebSite\\Kendo\\123.png", true);
+                Image originalImage = System.Drawing.Image.FromFile("E:\\Share\\未分类\\Kendo\\123.png", true);
                 originalImage.Save(Response.OutputStream, System.Drawing.Imaging.ImageFormat.Jpeg);
                 return originalImage;
             }

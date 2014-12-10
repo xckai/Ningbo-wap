@@ -7,7 +7,9 @@ using MobileWebSite.BLL.OrderOperation.BLL;
 using CPCApp.Data.Model;
 using CPCApp.Data.DAL;
 using CPCApp.Data.IDAL;
-
+using System.IO;
+using System.Threading;
+using MobileWebSite.BLL.ToPDF;
 namespace MobileWebSite.Controllers
 {
     public class TransportationController : Controller
@@ -113,25 +115,30 @@ namespace MobileWebSite.Controllers
                 transportData.Send_Time = DateTime.Now.ToString("f");
                 transportData.Order_ID = int.Parse(Request.Params.GetValues("orderID")[0]);
                 transportData.Receive_Time = "";
-                transportData.Distribution_Download_Addr = "1232132";
+                db.Distribution.Add(transportData);
+                string addr = Session["enterpriseID"] + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pdf";//企业ID+当前时间为订单时间
 
+                string pdfpath = Path.Combine(HttpContext.Server.MapPath("../DistributionFile"), addr);
+                transportData.Distribution_Download_Addr = "/DistributionFile/" + addr;
                 db.Distribution.Add(transportData);
                 int count = db.SaveChanges();
-                if (count > 0)
+                if (!Directory.Exists(Server.MapPath("../DistributionFile")))
                 {
-                    //  this.ConvertFile(file,request.RequestDetectionID,uploadpath);
-                    return Content("1");  //提交成功
+                    Directory.CreateDirectory(Server.MapPath("../DistributionFile"));
                 }
-                else
-                {
-                    return Content("0");
-                }
+                DistributionCreation dis2pdf = new DistributionCreation(transportData, pdfpath);
+                Thread thread = new Thread(dis2pdf.Createpdf);
+                thread.IsBackground = true;
+                thread.Start();
+                return Content("1");  //提交成功
             }
             catch
             {
                 return Content("0");
             }
         }
+      
+       
 
         /*
          *修改物流状态
