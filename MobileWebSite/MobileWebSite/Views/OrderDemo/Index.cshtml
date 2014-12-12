@@ -13,9 +13,8 @@
                     <div id="searchout">
                         <div>
                             <div id="searchform">
-                                <input type="text" id="search_input" name="search">
-                                <input type="text" id="searchbutton" name="search2" onclick="onSearch()" readonly="readonly">
-                                @*<div id="searchbutton"></div>*@
+                                <input id="search_input" type="text" name="search">
+                                <input id="searchbutton" type="text" name="search2" onclick="onSearch()" readonly="readonly">
                             </div>
                         </div>
                     </div>
@@ -23,16 +22,15 @@
             </form>
             <br />
         </div>
-        <div style="margin-top:10px">
-            <ul id="listsource" data-role="listview" data-source="mydataSource" data-template="inboxItem" class="inboxList"></ul>
+        <div style="margin-top: 10px">
+            <ul id="listsource" data-role="listview" data-source="mydataSource" 
+                data-template="inboxItem" class="inboxList"></ul>
         </div>
 
-
         <script type="script/x-kendo-template" id="inboxItem">
-         
             <div class="item">
                 <div class="item-inside">
-                  <p1 class = "orderNum">订单号：#: orderNum #</p1>
+                    <p1 class = "orderNum">订单号：#: orderNum #</p1>
                 </div>
 
                 #if(category==0)
@@ -42,42 +40,32 @@
                 {#
                     <h4 class ="orderSupplier" style="margin-bottom:5px;margin-top:5px">承接方：#: orderSupplier#</h4>
                 #}#
-          
+
                 <h4 class ="orderStatus" style="margin-bottom:5px;margin-top:5px">订单状态：#: orderStatus#</h4>
-             
+                 <div class="divcss5-right">
+                    <a class="reply" data-role="button"  onclick=OrderContent("#:orderID#") >订单详情</a>
+                </div>
             </div>
-             <div class="divcss5-right">
-                 <a class="reply" data-role="button"  onclick=OrderContent("#:orderID#")
-                      >订单详情</a>
-             </div>
-         
         </script>
 
         <script>
             /*用于对form表单-搜索框表单-禁用按回车键搜索
            */
-            for (var i = 0; i < 1; i++) {
-               // if(i<1) history.go(0);
-            }
-
             $("#searchForm").keypress(function (e) {
                 if (e.which == 13) {
                     return false;
                 }
             });
 
-            String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
-                var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
-                var r = this.substr(this.indexOf("\?") + 1).match(reg);
-                if (r != null) return unescape(r[2]); return null;
+            var category = "@ViewBag.Category";
+            var searchValue = "@ViewBag.SearchValue";
+            var select = "@ViewBag.Select";
+
+            if (searchValue == null || searchValue == "") {
+                searchValue = "notsearch";
             }
-            // var str = location.search;  //获取当前页面url？后面的数值
-            var str = window.location.href;
-            str = decodeURI(str);   //对url进行解码
-            var category = str.GetValue("category");  //区分公司是否为接收方
-            var searchValue = str.GetValue("searchValue");  //获取搜索的值
-            var select = str.GetValue("select");
-            if (select == null) {
+
+            if (select == null || select == "") {
                 select = 7;
             } else {
                 select = parseInt(select);
@@ -98,8 +86,8 @@
                 dataTextField: "text",
                 dataValueField: "value",
                 dataSource: data,
-                //filter: "contains",
-                //suggest: true,
+                filter: "contains",
+                suggest: true,
                 select: onSelect,
                 index: select,
             });
@@ -113,7 +101,7 @@
                             {
                                 option: select,
                                 category: category,
-                                content: searchValue
+                                searchValue: searchValue
                             },
                         dataType: "json"
                     }
@@ -125,14 +113,10 @@
                 var select = this.dataItem(e.item.index());
                 app.navigate(encodeURI("/../OrderDemo/Index" + "?category=" + category
                      + "&select=" + select.value), "slide");
-                //location.replace(encodeURI(window.location.pathname + "?category=" + category
-                //     + "&select=" + select.value));
             }
 
             function onSearch() {
-                searchValue = document.getElementById("search_input").value;
-                //kendo.mobile.application.replace(encodeURI("/../OrderDemo/Index" + '?category=' + category
-                //       + "&select=" + select + '&searchValue=' + searchValue), "slide");
+                searchValue = $.trim($("#search_input").val());
                 app.navigate(encodeURI("/../OrderDemo/Index" + '?category=' + category
                        + "&select=" + select + '&searchValue=' + searchValue), "slide")
             }
@@ -142,15 +126,13 @@
                 urlbase += orderid;
                 urlbase += "&category=";
                 urlbase += category;
-                //kendo.mobile.application.replace(urlbase, "slide");
                 app.navigate(urlbase, "slide");
-                //console.info(urlbase);
             }
         </script>
     </div>
     @*<script>
-        var app = new kendo.mobile.Application(document.body);
-    </script>*@
+            var app = new kendo.mobile.Application(document.body);
+        </script>*@
 
     <style scoped>
         .reply {
@@ -161,7 +143,6 @@
         .inboxList {
             font-size: .8em;
         }
-
     </style>
 </body>
 </html>

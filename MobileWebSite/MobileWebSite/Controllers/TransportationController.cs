@@ -30,8 +30,6 @@ namespace MobileWebSite.Controllers
             catch
             {
                 enterpriseID = 10001;   //设置一个默认的企业id，实际上线时需要做一个异常处理机制
-                //var tempTransportationLists = transportOper.GetTransportLists(enterpriseID, category); //, transportState
-                //return Json(tempTransportationLists, JsonRequestBehavior.AllowGet);
             }
 
             List<TransportListClass> tempTransportationLists;
@@ -48,7 +46,7 @@ namespace MobileWebSite.Controllers
 
         public JsonResult GetOrderList(int orderID)
         {
-            var tempOrderLists = transportOper.GetOrderLists(orderID);
+            var tempOrderLists = transportOper.GetOrderListsByDistributionId(orderID);
             return Json(tempOrderLists, JsonRequestBehavior.AllowGet);
         }
 
@@ -222,7 +220,7 @@ namespace MobileWebSite.Controllers
             var publishEnterprise = GetEnterprise(Receiver, Sender, category);
             if (orderId != -1)
             {
-                var tempOrderLists = transportOper.GetOrderLists(orderId);
+                var tempOrderLists = transportOper.GetOrderListsByDistributionId(orderId);
                 ViewBag.OrderName = tempOrderLists.ElementAt(0).orderName;
             }
             ViewBag.OrderId = orderId;

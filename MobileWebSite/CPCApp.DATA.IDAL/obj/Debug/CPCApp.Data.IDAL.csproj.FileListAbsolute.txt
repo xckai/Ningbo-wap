@@ -1,0 +1,12 @@
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\CPCApp.DATA.IDAL.dll.config
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\CPCApp.DATA.IDAL.dll
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\CPCApp.DATA.IDAL.pdb
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\CPCApp.Data.Model.dll
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\EntityFramework.dll
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\EntityFramework.SqlServer.dll
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\CPCApp.Data.Model.pdb
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\EntityFramework.xml
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\bin\Debug\EntityFramework.SqlServer.xml
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\obj\Debug\CPCApp.Data.IDAL.csprojResolveAssemblyReference.cache
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\obj\Debug\CPCApp.DATA.IDAL.dll
+F:\360\GitHub\Ningbo-wap\MobileWebSite\CPCApp.DATA.IDAL\obj\Debug\CPCApp.DATA.IDAL.pdb

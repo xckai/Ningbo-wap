@@ -73,7 +73,7 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         private List<Order> orderList = new List<Order>();   //订单列表
         private List<OrderStatus> orderStatuList = new List<OrderStatus>(); //订单状态列表
         private List<EnterpriseRepository> enterpriseList = new List<EnterpriseRepository>(); //企业列表
-        public List<orderListClass> GetOrderLists(int orderID)
+        public List<orderListClass> GetOrderListsByDistributionId(int orderID)
         {
             var tempOrderList = new List<orderListClass>();
             transportList = transportRep.LoadEntities((Distribution => Distribution.Order_ID == orderID)).ToList();
@@ -260,87 +260,97 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         //option 0 代表未完成的物流 1代表已完成的物流
         public int GetTransporationNum(int EnterpriseId, int category, int option)
         {
+            var tempOrderList = new List<Order>();
             int received = 0;
             int notreceived = 0;
-            if (category == 0)
+            //if (category == 0)
+            //{
+            try
             {
-                try
+                if (category == 0)
                 {
-                    var tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID
-                        == EnterpriseId).ToList();
-                    foreach (var tempTempOrder in tempOrderList)
+                    tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID
+                   == EnterpriseId).ToList();
+                }
+                else if (category == 1)
+                {
+                    tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID
+                    == EnterpriseId).ToList();
+                }
+                //var tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID
+                //    == EnterpriseId).ToList();
+                foreach (var tempTempOrder in tempOrderList)
+                {
+                    var tempTranspotList = transportRep.LoadEntities((
+                        Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
+                    foreach (var tempTempTranspot in tempTranspotList)
                     {
-                        var tempTranspotList = transportRep.LoadEntities((
-                            Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
-                        foreach (var tempTempTranspot in tempTranspotList)
+                        int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
+                        if (lastStatus == 2)
                         {
-                            int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
-                            if (lastStatus == 2)
-                            {
-                                received++;
-                            }
-                            else
-                            {
-                                notreceived++;
-                            }
+                            received++;
+                        }
+                        else
+                        {
+                            notreceived++;
                         }
                     }
-                    if (option == 0)
-                    {
-                        return notreceived;
-                    }
-                    else
-                    {
-                        return received;
-                    }
                 }
-                catch (System.Exception ex)
+                if (option == 0)
                 {
-                    //ex.ToString
-                    return 0;
+                    return notreceived;
+                }
+                else
+                {
+                    return received;
                 }
             }
-            else if (category == 1)
-            {
-                try
-                {
-                    var tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID
-                        == EnterpriseId).ToList();
-                    foreach (var tempTempOrder in tempOrderList)
-                    {
-                        var tempTranspotList = transportRep.LoadEntities((
-                            Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
-                        foreach (var tempTempTranspot in tempTranspotList)
-                        {
-                            int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
-                            if (lastStatus == 2)
-                            {
-                                received++;
-                            }
-                            else
-                            {
-                                notreceived++;
-                            }
-                        }
-                    }
-                    if (option == 0)
-                    {
-                        return notreceived;
-                    }
-                    else
-                    {
-                        return received;
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    return 0;
-                }
-            }
-            else
+            catch (System.Exception ex)
             {
                 return 0;
             }
+            //}
+            //else if (category == 1)
+            //{
+            //    try
+            //    {
+            //        var tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID
+            //            == EnterpriseId).ToList();
+            //        foreach (var tempTempOrder in tempOrderList)
+            //        {
+            //            var tempTranspotList = transportRep.LoadEntities((
+            //                Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
+            //            foreach (var tempTempTranspot in tempTranspotList)
+            //            {
+            //                int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
+            //                if (lastStatus == 2)
+            //                {
+            //                    received++;
+            //                }
+            //                else
+            //                {
+            //                    notreceived++;
+            //                }
+            //            }
+            //        }
+            //        if (option == 0)
+            //        {
+            //            return notreceived;
+            //        }
+            //        else
+            //        {
+            //            return received;
+            //        }
+            //    }
+            //    catch (System.Exception ex)
+            //    {
+            //        return 0;
+            //    }
+            //}
+            //else
+            //{
+            //    return 0;
+            //}
         }
     }
 }

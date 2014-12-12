@@ -27,20 +27,18 @@
 <body>
     <div id="actionsheet-view" data-role="view" data-title="货物单列表" data-reload="true">
         <div id="myheaderTransport" style="margin-top:2px">
-            @*<input id="status" style="width:35%;height:25px;" placeholder="Select status..." />*@
+
             <form id="searchFormTransport" @*action=""*@ method="post" onsubmit=false>
                 <div style="list-style-type:none">
                     <div id="searchoutTransport">
                         <div>
                             <div id="searchformTransport">
                                 <input id="search_inputTransport" type="text" name="search" />
-                                @*<img id="searchbutton" />*@
                                 <input id="searchbuttonTransport" onclick="searchToTransport()" readonly="readonly" />
                             </div>
                         </div>
                     </div>
                 </div>
-                @*</fieldset>*@
             </form>
             <br />
         </div>
@@ -48,9 +46,9 @@
             <ul id="listsource" class="inboxListTranportIndex" data-role="listview" data-source="TransportSource"
                 data-endless-scroll="false" data-template="transportItem"></ul>
         </div>
-    </div>
 
-    <script id="transportItem" type="script/x-kendo-template">
+
+        <script id="transportItem" type="script/x-kendo-template">
         <div class="item">
             <div class="item-inside">
                 <p1> 物流编号：#: distributionId#</p1>
@@ -77,95 +75,73 @@
                             onclick = deliveryGoods(#:distributionId#)
                             value="#:distributionId#">确认收货</a>
                  #}#
-
              </div>
-            @*<div class="item-inside2">
-                <a class="reply" data-role="button" onclick=logisticsContent(#:distributionId#)> 物流详情 </a>
-            </div>*@
         </div>
-    </script>
+        </script>
 
-    <script>
-        //console.log($.trim($("#changeState").val()));
-        /*用于对form表单-搜索框表单-禁用按回车键搜索
-        */
-        $("#searchForm").keypress(function (e) {
-            if (e.which == 13) {
-                return false;
-            }
-        });
-        //String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
-        //    var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
-        //    var r = this.substr(this.indexOf("\?") + 1).match(reg);
-        //    if (r != null) return unescape(r[2]); return null;
-        //}
-        //// var str = location.search;  //获取当前页面url？后面的数值
-        //var str = window.location.href;
-        //str = decodeURI(str);   //对url进行解码
-        var category ="@ViewBag.Category";
-        var searchValue = "@ViewBag.SearchValue";  //文本框中的输入的内容
-        //searchValue = str.GetValue("searchValue");  //获取搜索的值
-
-        //console.info("window.location.pathname = " + window.location.pathname + "  window.location.href = " + window.location.href);
-        //console.info("searchValue = " + searchValue);
-        if (searchValue == null  || searchValue == "") {
-            searchValue = "notsearch";
-            //console.info("searchValue 2222= " + searchValue);
-        }
-
-        function searchToTransport() {
-            // console.info('&searchValue=');
-            //searchValue = document.getElementById("search_inputTransport").value;
-            searchValue = $.trim($("#search_inputTransport").val());
-            if (searchValue.length != 0) {
-                //跳转到链接并对整个链接进行编码， searchValue 为文本框中输入的值 kendo.mobile.application.replaceapp.navigate(window.location.pathname
-                app.navigate(encodeURI("/../Transportation/Index" + '?category=' + category
-                    + '&searchValue=' + searchValue), "slide");
-            } else {
-                searchValue = "notsearch";
-                app.navigate(encodeURI("/../Transportation/Index" + '?category=' + category
-                    + '&searchValue=' + searchValue), "slide")
-                //console.info('&searchValue22222=' + searchValue);
-            }
-        }
-
-        var TransportSource = new kendo.data.DataSource({
-            transport: {
-                read: {
-                    type: "POST",
-                    url: "/Transportation/GetTransportList",
-                    data:
-                                {
-                                    // enterpriseID: 10001,
-                                    category: category,
-                                    searchValue: searchValue,
-                                    //transportState: 0,
-                                },
-                    dataType: "json"
+        <script>
+            //String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
+            //    var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
+            //    var r = this.substr(this.indexOf("\?") + 1).match(reg);
+            //    if (r != null) return unescape(r[2]); return null;
+            //}
+            //// var str = location.search;  //获取当前页面url？后面的数值
+            //var str = window.location.href;
+            //str = decodeURI(str);   //对url进行解码
+            //searchValue = str.GetValue("searchValue");  //获取搜索的值
+            //console.log($.trim($("#changeState").val()));
+            /*用于对form表单-搜索框表单-禁用按回车键搜索
+            */
+            $("#searchForm").keypress(function (e) {
+                if (e.which == 13) {
+                    return false;
                 }
-            },
-        });
+            });
 
-        //function replaceBar() {
-        //    kendo.mobile.application.replace("#baz");
-        //}
+            var category = "@ViewBag.Category";
+            var searchValue = "@ViewBag.SearchValue";  //文本框中的输入的内容
 
-        function logisticsContent(distributionId) {
-            var urlbase = "/../Transportation/TransportDetails?distributionID=";
-            urlbase += distributionId;
-            urlbase += "&category=" + category;
-            //kendo.mobile.application.replace(urlbase, "slide");
-            app.navigate(urlbase, "slide");
-            // app.navigate(urlbase, "slide");
-            //window.location.href = urlbase;
-            // kendo.mobile.application.replace(urlbase);
-            // location.replace(urlbase); //替换当前的页面
-        }
+            if (searchValue == null || searchValue == "") {
+                searchValue = "notsearch";
+            }
 
-        function deliveryGoods(distributionId) {       //确认收货
-           
-           // $("#deliveryGoods").click( 
-                //console.log($.trim($("#changeState").val())),
+            function searchToTransport() {
+                searchValue = $.trim($("#search_inputTransport").val());
+                if (searchValue.length != 0) {
+                    //跳转到链接并对整个链接进行编码， searchValue 为文本框中输入的值 kendo.mobile.application.replaceapp.navigate(window.location.pathname
+                    app.navigate(encodeURI("/../Transportation/Index" + '?category=' + category
+                        + '&searchValue=' + searchValue), "slide");
+                } else {
+                    searchValue = "notsearch";
+                    app.navigate(encodeURI("/../Transportation/Index" + '?category=' + category
+                        + '&searchValue=' + searchValue), "slide")
+                    //console.info('&searchValue22222=' + searchValue);
+                }
+            }
+
+            var TransportSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        type: "POST",
+                        url: "/Transportation/GetTransportList",
+                        data:
+                                    {
+                                        category: category,
+                                        searchValue: searchValue,
+                                    },
+                        dataType: "json"
+                    }
+                },
+            });
+
+            function logisticsContent(distributionId) {
+                var urlbase = "/../Transportation/TransportDetails?distributionID=";
+                urlbase += distributionId;
+                urlbase += "&category=" + category;
+                app.navigate(urlbase, "slide");
+            }
+
+            function deliveryGoods(distributionId) {       //确认收货
                 $.ajax({
                     url: "/Transportation/changeTransportState",
                     method: "POST",
@@ -177,16 +153,12 @@
                         alert("Connection error");
                     },
                     success: function (msg) {
-                        //kendo.mobile.application.replace
                         app.navigate("/../Transportation/showAddSuccess?msg=" + msg);
                     }
                 })
-                //);
-        }
+            }
 
-
-        function changeState(distributionId) {  //开始发货
-            //$("#changeState").click(
+            function changeState(distributionId) {  //开始发货
                 $.ajax({
                     url: "/Transportation/changeTransportState",
                     method: "POST",
@@ -198,14 +170,12 @@
                         alert("Connection error");
                     },
                     success: function (msg) {
-                        //kendo.mobile.application.replace
                         app.navigate("/../Transportation/showAddSuccess?msg=" + msg);
                     }
                 })
-            //);
-        }
-
-    </script>
+            }
+        </script>
+    </div>
     <style scoped>
         .replyTransportIndex {
             float: right;
@@ -244,7 +214,6 @@
                 }
 
         #myheaderTransport {
-            /*width: 99%;*/
             width: 96%;
             margin: 0px auto;
         }
@@ -253,6 +222,7 @@
             border: 2px,solid,rgba(213, 213, 213, 0.4);
             /*width: 95%;*/
             width: auto;
+            height: 20px;
             margin: 0px auto;
             /*float: none;*/
             border-radius: 5px;
