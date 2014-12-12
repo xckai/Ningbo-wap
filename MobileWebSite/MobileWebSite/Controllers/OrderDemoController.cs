@@ -35,6 +35,8 @@ namespace MobileWebSite.Controllers
              ViewBag.OrderSupplier = tempList[0].orderSupplier;
              ViewBag.OrderContent = tempList[0].orderContent;
              ViewBag.OrderTime = tempList[0].orderTime;
+             ViewBag.orderReceiver = tempList[0].orderReceiver;
+             ViewBag.orderSender = tempList[0].orderSender;
 
              ViewBag.Category = category;
              ViewBag.OrderId = orderId;

@@ -26,16 +26,16 @@
     </head>*@
 <body>
     <div id="actionsheet-view" data-role="view" data-title="货物单列表" data-reload="true">
-        <div id="myheader" style="margin-top:2px">
+        <div id="myheaderTransport" style="margin-top:2px">
             @*<input id="status" style="width:35%;height:25px;" placeholder="Select status..." />*@
-            <form id="searchForm" @*action=""*@ method="post" onsubmit=false>
+            <form id="searchFormTransport" @*action=""*@ method="post" onsubmit=false>
                 <div style="list-style-type:none">
-                    <div id="searchout">
+                    <div id="searchoutTransport">
                         <div>
-                            <div id="searchform">
-                                <input type="text" id="search_input" name="search"/>
+                            <div id="searchformTransport">
+                                <input id="search_inputTransport" type="text" name="search" />
                                 @*<img id="searchbutton" />*@
-                                <input id="searchbutton" onclick="searchToTransport()" readonly="readonly" />
+                                <input id="searchbuttonTransport" onclick="searchToTransport()" readonly="readonly" />
                             </div>
                         </div>
                     </div>
@@ -45,17 +45,15 @@
             <br />
         </div>
         <div style="margin-top: 10px">
-            <br />
-            <ul id="listsource" class="inboxListTranportIndex" data-role="listview" data-source="TransportSource" data-endless-scroll="false"
-                data-template="transportItem"></ul>
+            <ul id="listsource" class="inboxListTranportIndex" data-role="listview" data-source="TransportSource"
+                data-endless-scroll="false" data-template="transportItem"></ul>
         </div>
     </div>
 
     <script id="transportItem" type="script/x-kendo-template">
         <div class="item">
             <div class="item-inside">
-                <p1> 物流编号：#: TransportNumber#</p1>
-                <a class="reply" data-role="button" onclick=logisticsContent(#:distributionId#)> 物流详情 </a>
+                <p1> 物流编号：#: distributionId#</p1>
             </div>
             # if( category == 0){#
                 <h4> 发货方：#: consignor# </h4>
@@ -63,10 +61,32 @@
                 <h4> 收货方：#: consignee# </h4>
             #}#
             <h4> 物流状态：#: status# </h4>
+
+        <div class="item-insideTransportIndex">
+                <a class="replyTransportIndex" data-role="button" onclick=logisticsContent(#:distributionId#)> 物流详情 </a>
+                # if(status == "配送单生成" && category == 1){#
+                    <a id  = "changeState" data-role="button" class="replyTransportIndex"
+                            name = "changeState"  target="_self"
+                            @*data-click="changeState"*@
+                            onclick = changeState(#:distributionId#)
+                            value="#:distributionId#"> 点击发货</a>
+                 # } else if (status == "物品已经发货" && category == 0){#
+                        <a id= "deliveryGoods" data-role="button"class="replyTransportIndex"
+                            name = "deliveryGoods"
+                            @*data-click="deliveryGoods"*@
+                            onclick = deliveryGoods(#:distributionId#)
+                            value="#:distributionId#">确认收货</a>
+                 #}#
+
+             </div>
+            @*<div class="item-inside2">
+                <a class="reply" data-role="button" onclick=logisticsContent(#:distributionId#)> 物流详情 </a>
+            </div>*@
         </div>
     </script>
 
     <script>
+        //console.log($.trim($("#changeState").val()));
         /*用于对form表单-搜索框表单-禁用按回车键搜索
         */
         $("#searchForm").keypress(function (e) {
@@ -74,50 +94,38 @@
                 return false;
             }
         });
+        //String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
+        //    var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
+        //    var r = this.substr(this.indexOf("\?") + 1).match(reg);
+        //    if (r != null) return unescape(r[2]); return null;
+        //}
+        //// var str = location.search;  //获取当前页面url？后面的数值
+        //var str = window.location.href;
+        //str = decodeURI(str);   //对url进行解码
+        var category ="@ViewBag.Category";
+        var searchValue = "@ViewBag.SearchValue";  //文本框中的输入的内容
+        //searchValue = str.GetValue("searchValue");  //获取搜索的值
 
-        String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
-            var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
-            var r = this.substr(this.indexOf("\?") + 1).match(reg);
-            if (r != null) return unescape(r[2]); return null;
-        }
-        // var str = location.search;  //获取当前页面url？后面的数值
-        var str = window.location.href;
-        str = decodeURI(str);   //对url进行解码
-        var category = str.GetValue("category");  //区分公司是否为接收方
-        var searchValue = "notsearch";  //文本框中的输入的内容
-        var isSearch = 0;  //用于判断是否在进行页面的搜索，0表示不是搜索状态， 1表示搜索状态
-        searchValue = str.GetValue("searchValue");  //获取搜索的值
-
-       // console.info("window.location.pathname = " + window.location.pathname + "  window.location.href = " + window.location.href);
-
-        if (searchValue == null) {
+        //console.info("window.location.pathname = " + window.location.pathname + "  window.location.href = " + window.location.href);
+        //console.info("searchValue = " + searchValue);
+        if (searchValue == null  || searchValue == "") {
             searchValue = "notsearch";
             //console.info("searchValue 2222= " + searchValue);
         }
 
-        isSearch = str.GetValue("isSearch");  //是否在搜索
-
-        if (isSearch == null) isSearch = 0; //是否能从url中获得isSearch的值
-
         function searchToTransport() {
-           // console.info('&searchValue=');
-            searchValue = document.getElementById("search_input").value;
+            // console.info('&searchValue=');
+            //searchValue = document.getElementById("search_inputTransport").value;
+            searchValue = $.trim($("#search_inputTransport").val());
             if (searchValue.length != 0) {
-                isSearch = 1;
-                //跳转到链接并对整个链接进行编码， searchValue 为文本框中输入的值 app.navigate(window.location.pathname
-                kendo.mobile.application.replace(encodeURI("/../Transportation/Index" + '?category=' + category
-                    + '&searchValue=' + searchValue + '&isSearch=' + isSearch), "slide");
-                // location.replace(encodeURI(window.location.pathname + '?category=' + category
-                //     + '&searchValue=' + searchValue + '&isSearch=' + isSearch));
-                //console.info('&searchValue1111=' + searchValue);
+                //跳转到链接并对整个链接进行编码， searchValue 为文本框中输入的值 kendo.mobile.application.replaceapp.navigate(window.location.pathname
+                app.navigate(encodeURI("/../Transportation/Index" + '?category=' + category
+                    + '&searchValue=' + searchValue), "slide");
             } else {
-                isSearch = 0;
                 searchValue = "notsearch";
-                kendo.mobile.application.replace(encodeURI("/../Transportation/Index" + '?category=' + category
-                    + '&searchValue=' + searchValue + '&isSearch=' + isSearch), "slide")
+                app.navigate(encodeURI("/../Transportation/Index" + '?category=' + category
+                    + '&searchValue=' + searchValue), "slide")
                 //console.info('&searchValue22222=' + searchValue);
-                //location.replace(encodeURI(window.location.pathname + '?category=' + category
-                //    + '&searchValue=' + searchValue + '&isSearch=' + isSearch));app.navigate(
             }
         }
 
@@ -142,24 +150,76 @@
         //    kendo.mobile.application.replace("#baz");
         //}
 
-        function logisticsContent(distributionId1) {
-            //location.reload();
-            history.go(0);
+        function logisticsContent(distributionId) {
             var urlbase = "/../Transportation/TransportDetails?distributionID=";
-            urlbase += distributionId1;
+            urlbase += distributionId;
             urlbase += "&category=" + category;
-            kendo.mobile.application.replace(urlbase, "slide");
-          
+            //kendo.mobile.application.replace(urlbase, "slide");
+            app.navigate(urlbase, "slide");
             // app.navigate(urlbase, "slide");
             //window.location.href = urlbase;
             // kendo.mobile.application.replace(urlbase);
             // location.replace(urlbase); //替换当前的页面
         }
+
+        function deliveryGoods(distributionId) {       //确认收货
+           
+           // $("#deliveryGoods").click( 
+                //console.log($.trim($("#changeState").val())),
+                $.ajax({
+                    url: "/Transportation/changeTransportState",
+                    method: "POST",
+                    data: {
+                        state: 2,   //确认收货状态
+                        distributionId: distributionId
+                    },
+                    error: function (request) {
+                        alert("Connection error");
+                    },
+                    success: function (msg) {
+                        //kendo.mobile.application.replace
+                        app.navigate("/../Transportation/showAddSuccess?msg=" + msg);
+                    }
+                })
+                //);
+        }
+
+
+        function changeState(distributionId) {  //开始发货
+            //$("#changeState").click(
+                $.ajax({
+                    url: "/Transportation/changeTransportState",
+                    method: "POST",
+                    data: {
+                        state: 1,  //开始发货状态
+                        distributionId: distributionId
+                    },
+                    error: function (request) {
+                        alert("Connection error");
+                    },
+                    success: function (msg) {
+                        //kendo.mobile.application.replace
+                        app.navigate("/../Transportation/showAddSuccess?msg=" + msg);
+                    }
+                })
+            //);
+        }
+
     </script>
     <style scoped>
-        .reply {
+        .replyTransportIndex {
             float: right;
             margin-right: 10px;
+            /*margin: 1.9em 2.7em 0.5em 0.7em;*/
+        }
+
+        .item-insideTransportIndex {
+            width: 95%;
+            height: 35px;
+            border-top: 2px solid #efeff4;
+            margin: 20px 10px 10px 10px;
+            border-bottom: 0px solid #efeff4;
+            background-color: #fff;
         }
 
         .inboxListTranportIndex {
@@ -182,8 +242,77 @@
                     float: left;
                     margin-right: 10px;
                 }
-    </style>
 
+        #myheaderTransport {
+            /*width: 99%;*/
+            width: 96%;
+            margin: 0px auto;
+        }
+
+        #searchFormTransport {
+            border: 2px,solid,rgba(213, 213, 213, 0.4);
+            /*width: 95%;*/
+            width: auto;
+            margin: 0px auto;
+            /*float: none;*/
+            border-radius: 5px;
+        }
+
+        #searchoutTransport {
+            width: inherit;
+        }
+
+        #searchformTransport {
+            width: 100%;
+            /*width:auto;*/
+            background: #eee;
+            margin: 0px auto 0;
+            float: left;
+        }
+
+        #search_inputTransport {
+            width: 100%;
+            /*width:auto;*/
+            margin-left: 0px;
+            padding-right: 0px;
+            height: 30px;
+            float: left;
+            padding-left: 0px;
+            border-left: none;
+            border-right: none;
+            border-radius: 5px;
+            outline: 0;
+            background-color: rgba(220, 220, 220, 1.0);
+            font-family: "微软雅黑";
+            font-size: 17px;
+            color: #464646;
+            /*position: relative;*/
+            z-index: 1;
+        }
+
+        #searchbuttonTransport {
+            width: 50px;
+            height: 30px;
+            margin-left: 0px;
+            margin-top: -30px;
+            float: right;
+            border-left: none;
+            background-color: rgba(210, 210, 210, 0);
+            background-image: url('../../Content/themes/base/images/search4.png');
+            background-size: 40%;
+            border-radius: 10px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+            #searchbuttonTransport:hover {
+                background-color: rgba(213, 213, 213, 1);
+            }
+
+            #searchbuttonTransport:active {
+                background-color: rgba(200, 200, 200, 1);
+            }
+    </style>
     @*<script>
             var app = new kendo.mobile.Application(document.body,
             {

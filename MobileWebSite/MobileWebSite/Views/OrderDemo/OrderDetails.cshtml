@@ -5,22 +5,6 @@
 
 <!DOCTYPE html>
 <html>
-@*<head>
-        <title>订单详情</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <script src="http://cdn.kendostatic.com/2014.3.1119/js/jquery.min.js"></script>
-
-        <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
-        <script src="~/Scripts/js/kendo.all.min.js"></script>
-        <link href="~/Content/themes/website-searchbox.css" rel="stylesheet" />
-        <link href="~/Content/themes/div-item.css" rel="stylesheet" />
-
-    </head>*@
 
 <body>
     <div data-role="view" id="actionsheet-view" data-title="订单详情" data-reload="true">
@@ -72,59 +56,59 @@
                                                 }
 
                                             </ul>
-                                             <div class="itembutton-inside">
-                                
-                                @if (ViewBag.Category == 1)
-                                {
-                                    <input id="button1" style="width:110px; height:30px" onclick="changeStatus()" value=@ViewBag.NextSta data-role="button" name=" Status"></input>
-                                    <input id="button2" onclick="distribution()" value="配送" data-role="button" name=" Status" style="width: 110px; height: 30px;display:none"></input>
-                                    <input id="button3" onclick="checkDis()" value="查看配送单" data-role="button" name=" Status" style="width: 110px; height: 30px; display: none"></input>
+                                            <div class="divcss5-right">
 
-                                    if (ViewBag.NextSta == "客户全部签收")
-                                    {
-                                        <script>
-                                            document.getElementById("button1").style.display = "none";
-                                            document.getElementById("button3").style.display = "";
-                                        </script>
-                                    }
-                                    if (ViewBag.NextSta == "订单生产完成" || ViewBag.NextSta == "配送完成")
-                                    {
-                                        <script>
-                                            document.getElementById("button2").style.display = "";
-                                            document.getElementById("button3").style.display = "";
-                                        </script>
-                                    }
-                                    if (ViewBag.NextSta == "客户已评论")
-                                    {
-                                        <script>
-                                            document.getElementById("button1").value = "评价发布方";
-                                            document.getElementById("button2").style.display = "none";
-                                            document.getElementById("button3").style.display = "none";
-                                        </script>
-                                    }
-                                }
-                                else
-                                {
-                                    <input id="button4" style="width: 110px; height: 30px" onclick="checkDis()" value="查看配送单" data-role="button" name=" checkDis">
-                                    <input id="button5" onclick="changeStatus()" value="全部签收" data-role="button" name=" ReciveOrder" style="width: 110px; display: none; height: 30px">
-                                    <input id="button6" onclick="changeStatus()" value="评价承接方" data-role="button" name=" Comment" style="width: 110px; display: none; height: 30px">
+                                                @if (ViewBag.Category == 1)
+                                                {
+                                                    <a id="button1" style="float:right;" onclick="changeStatus()"  data-role="button" name=" Status">@ViewBag.NextSta</a>
+                                                   <a id="button2" onclick="distribution()" data-role="button" name=" Status" style="float: right; display: none; ">配送</a>
+                                                    <a id="button3" onclick="checkDis()"  data-role="button" name=" Status" style="float: right; display: none; ">查看配送单</a>
 
-                                    if (ViewBag.NextSta == "客户已评论")
-                                    {
-                                        <script>
-                                            document.getElementById("button4").style.display = "none";
-                                            document.getElementById("button5").style.display = "none";
-                                            document.getElementById("button6").style.display = "";
-                                        </script>
-                                    }
-                                    if (ViewBag.NextSta == "客户全部签收")
-                                    {
-                                        <script>
-                                            document.getElementById("button5"), style.display = "";
-                                        </script>
-                                    }
-                                }
-                            </div>
+                                                     if (ViewBag.NextSta == "客户全部签收")
+                                                    {
+                                                        <script>
+                                                            document.getElementById("button1").style.display = "none";
+                                                            document.getElementById("button3").style.display = "";
+                                                        </script>
+                                                    }
+                                                    if (ViewBag.NextSta == "订单生产完成" || ViewBag.NextSta == "配送完成")
+                                                    {
+                                                        <script>
+                                                            document.getElementById("button2").style.display = "";
+                                                            document.getElementById("button3").style.display = "";
+                                                        </script>
+                                                    }
+                                                    if (ViewBag.NextSta == "客户已评论")
+                                                    {
+                                                        <script>
+                                                            document.getElementById("button1").value = "评价发布方";
+                                                            document.getElementById("button2").style.display = "none";
+                                                            document.getElementById("button3").style.display = "none";
+                                                        </script>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <a id="button4" style="float:right;" onclick="checkDis()" data-role="button" name=" checkDis">查看配送单</a>
+                                                    <a id="button5" onclick="changeStatus()" data-role="button" name=" ReciveOrder" style="float:right; display: none; ">全部签收</a>
+                                                    <a id="button6" onclick="changeStatus()" data-role="button" name=" Comment" style="float: right; display: none;">评价承接方</a>
+
+                                                    if (ViewBag.NextSta == "客户已评论")
+                                                    {
+                                                        <script>
+                                                            document.getElementById("button4").style.display = "none";
+                                                            document.getElementById("button5").style.display = "none";
+                                                            document.getElementById("button6").style.display = "";
+                                                        </script>
+                                                    }
+                                                    if (ViewBag.NextSta == "客户全部签收")
+                                                    {
+                                                        <script>
+                                                            document.getElementById("button5"), style.display = "";
+                                                        </script>
+                                                    }
+                                                }
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -169,6 +153,9 @@
     <script>
         var category = "@ViewBag.Category";
         var orderId = "@ViewBag.OrderId";
+        var Receiver = "@ViewBag.orderReceiver";
+        var Sender = "@ViewBag.orderSender";
+
 
         function changeStatus() {
             $.ajax({
@@ -226,11 +213,12 @@
             });
         }
 
-        function checkDis() {
-            kendo.mobile.application.replace("/../Transportation/distributionList?option=" + orderId + "&category=" + category);
+        function checkDis() {    
+            app.navigate("/../Transportation/distributionList?orderId=" + orderId + "&category=" + category);
         }
         function distribution() {
-            kendo.mobile.application.replace("/../Transportation/AddTransportList?option=" + orderId + "&category=" + category);
+           
+            app.navigate("/../Transportation/AddTransportList?orderId=" + orderId + "&category=" + category+"&sender="+Sender+"&receiver="+Receiver);
         }
 
         var dataSrc = new kendo.data.DataSource({

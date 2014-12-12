@@ -25,15 +25,7 @@
     </div>
 
     <script>
-        String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
-            var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
-            var r = this.substr(this.indexOf("\?") + 1).match(reg);
-            if (r != null)
-                return unescape(r[2]);
-            return null;
-        }
-        var str = location.search;  //获取当前页面url？后面的数值
-        var select = str.GetValue("msg");  //消息
+        var select = "@ViewBag.Message";
         //console.info(select);
         if (select == 1) {
             var infor = "提交成功";

@@ -4,26 +4,6 @@
 }
 
 <html>
-@*<head>
-        <style>
-            html {
-                font-size: 12px;
-                font-family: Arial, Helvetica, sans-serif;
-            }
-        </style>
-        <title></title>
-        <script src="~/Scripts/js/jquery.min.js"></script>
-        <script src="~/Scripts/js/kendo.all.min.js"></script>
-        <script src="~/Scripts/angular.min.js"></script>
-        <link href="~/Kendo/styles/kendo.common.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.rtl.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.default.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.dataviz.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
-        <link href="~/Kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
-        <link href="~/Content/themes/website-searchbox.css" rel="stylesheet" />
-        <link href="~/Content/themes/div-item.css" rel="stylesheet" />
-    </head>*@
 <body>
     <div id="actionsheet-view" data-role="view" data-title="订单列表" data-reload="true">
         <div id="myheader" style="margin-top:2px">
@@ -49,22 +29,28 @@
 
 
         <script type="script/x-kendo-template" id="inboxItem">
+         
             <div class="item">
                 <div class="item-inside">
                   <p1 class = "orderNum">订单号：#: orderNum #</p1>
-                  <a class="reply" data-role="button"  onclick=OrderContent("#:orderID#")
-                      >订单详情</a>
                 </div>
 
                 #if(category==0)
                 {#
-                    <h4 class ="orderSupplier">发布方：#: orderSupplier#</h4>
+                    <h4 class ="orderSupplier" style="margin-bottom:5px;margin-top:5px">发布方：#: orderSupplier#</h4>
                 #}else
                 {#
-                    <h4 class ="orderSupplier">承接方：#: orderSupplier#</h4>
+                    <h4 class ="orderSupplier" style="margin-bottom:5px;margin-top:5px">承接方：#: orderSupplier#</h4>
                 #}#
-                <h4 class ="orderStatus">订单状态：#: orderStatus#</h4>
+          
+                <h4 class ="orderStatus" style="margin-bottom:5px;margin-top:5px">订单状态：#: orderStatus#</h4>
+             
+            </div>
+             <div class="divcss5-right">
+                 <a class="reply" data-role="button"  onclick=OrderContent("#:orderID#")
+                      >订单详情</a>
              </div>
+         
         </script>
 
         <script>
@@ -145,16 +131,19 @@
 
             function onSearch() {
                 searchValue = document.getElementById("search_input").value;
-                kendo.mobile.application.replace(encodeURI("/../OrderDemo/Index" + '?category=' + category
-                       + "&select=" + select + '&searchValue=' + searchValue), "slide");
-            }//);
+                //kendo.mobile.application.replace(encodeURI("/../OrderDemo/Index" + '?category=' + category
+                //       + "&select=" + select + '&searchValue=' + searchValue), "slide");
+                app.navigate(encodeURI("/../OrderDemo/Index" + '?category=' + category
+                       + "&select=" + select + '&searchValue=' + searchValue), "slide")
+            }
 
             function OrderContent(orderid) {
                 var urlbase = "/../OrderDemo/OrderDetails?orderId=";
                 urlbase += orderid;
                 urlbase += "&category=";
                 urlbase += category;
-                kendo.mobile.application.replace(urlbase, "slide");
+                //kendo.mobile.application.replace(urlbase, "slide");
+                app.navigate(urlbase, "slide");
                 //console.info(urlbase);
             }
         </script>

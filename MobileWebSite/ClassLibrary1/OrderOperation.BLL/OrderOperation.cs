@@ -29,6 +29,8 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         public string orderName;
         public string orderContent;
         public string orderTime;
+        public int orderReceiver;
+        public int orderSender;
     }
     public class GetChat
     {
@@ -125,7 +127,7 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
                 }
                 else if (category == 1)
                 {
-                    getdata.category = 1;
+                    getdata.category = 0;
                     getdata.partner = orderlist.ElementAt(i).PublisherEnterprise_ID;
                 }
                 var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == getdata.orderID)).ToList();
@@ -177,6 +179,8 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
                 orderDetails.category = 0;
                 orderDetails.orderID = orderlist.ElementAt(0).Order_ID;
                 orderDetails.orderName = orderlist.ElementAt(0).Order_Name;
+                orderDetails.orderReceiver = orderlist.ElementAt(0).ProviderEnterprise_ID;
+                orderDetails.orderSender = orderlist.ElementAt(0).PublisherEnterprise_ID;
                 orderDetails.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
                 orderDetails.orderTime = orderlist.ElementAt(0).Order_Time;
                 orderDetails.orderNum = orderlist.ElementAt(0).Order_Code;
@@ -192,6 +196,8 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
                 orderDetails.orderID = orderlist.ElementAt(0).Order_ID;
                 orderDetails.orderName = orderlist.ElementAt(0).Order_Name;
                 orderDetails.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
+                orderDetails.orderReceiver = orderlist.ElementAt(0).PublisherEnterprise_ID;
+                orderDetails.orderSender = orderlist.ElementAt(0).ProviderEnterprise_ID;
                 orderDetails.orderTime = orderlist.ElementAt(0).Order_Time;
                 orderDetails.orderNum = orderlist.ElementAt(0).Order_Code;
                 orderDetails.orderContent = orderlist.ElementAt(0).Order_Content;
@@ -223,7 +229,7 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
             var orderlist = orderRep.LoadEntities((Orders => Orders.Order_ID == orderid)).ToList();
             var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == orderid)).ToList();
             var templist = new List<OrderSta>();
-            for (int i = 0; i < statuslist.Count; i++)
+            for (int i = statuslist.Count-1; i >=0; i--)
             {
                 OrderSta orderS = new OrderSta();
                 orderS.orderTime = statuslist.ElementAt(i).OrderStatus_Time;
@@ -296,78 +302,6 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
                 }
             }
             return temp_GetList;
-
-            // var templist = new List<GetDatabaseNum>();
-
-            // SqlConnection conn = new SqlConnection("Data Source=10.30.40.246; Initial Catalog=CPCAppDatazlh;Persist Security Info=True;User ID=sa;Password=123456;");  //连接数据库
-            // conn.Open(); //打开数据库
-
-            //    if (category == 0)
-            //    {
-            //        SqlDataAdapter sda1 = new SqlDataAdapter("select * from Orders where Order_Code like '%" + keywords + "%'" + "or Order_Name  like '%"+keywords+"%'" +"and PublisherEnterprise_ID=" + enterpriseid, conn);
-
-            //        DataTable Data1 = new DataTable();  //声明一个DataTable变量叫Data 
-            //        sda1.Fill(Data1);  //填充这个Data 
-            //        GetDatabaseNum getdata;
-            //        for (int i = 0; i < Data1.Rows.Count; i++)
-            //        {
-            //            getdata = new GetDatabaseNum();
-            //            getdata.orderNum = Data1.Rows[i]["Order_Code"].ToString();
-            //            getdata.orderID = Convert.ToInt32(Data1.Rows[i]["Order_ID"]);
-
-            //            var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == getdata.orderID)).ToList();
-            //            int statusnum = statuslist.Count - 1;
-            //            int orderStatContent = (int)statuslist[statusnum].OrderStatus_Content;
-            //            getdata.orderStatus = getStatus(orderStatContent);
-
-
-            //            getdata.category = 1;
-            //            getdata.partner = Convert.ToInt32(Data1.Rows[i]["ProviderEnterprise_ID"]);
-            //            var enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == getdata.partner)).ToList();
-            //            getdata.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
-
-            //            if (orderStatContent == option || option == 7)
-            //            {
-            //                templist.Add(getdata);
-            //            }
-
-
-
-            //        }
-            //    }
-            //    else
-            //    {
-            //        SqlDataAdapter sda1 = new SqlDataAdapter("select * from Orders where Order_Code like '%" + keywords + "%'"+ "or Order_Name like '%"+keywords+"%'"+ "and ProviderEnterprise_ID=" + enterpriseid, conn);
-            //        DataTable Data1 = new DataTable();  //声明一个DataTable变量叫Data 
-            //        sda1.Fill(Data1);  //填充这个Data 
-            //        GetDatabaseNum getdata;
-            //        for (int i = 0; i < Data1.Rows.Count; i++)
-            //        {
-            //            getdata = new GetDatabaseNum();
-            //            getdata.orderNum = Data1.Rows[i]["Order_Code"].ToString();
-            //            getdata.orderID = Convert.ToInt32(Data1.Rows[i]["Order_ID"]);
-
-            //            var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == getdata.orderID)).ToList();
-            //            int statusnum = statuslist.Count - 1;
-            //            int orderStatContent = (int)statuslist[statusnum].OrderStatus_Content;
-            //            getdata.orderStatus = getStatus(orderStatContent);
-
-
-            //            getdata.category = 1;
-            //            getdata.partner = Convert.ToInt32(Data1.Rows[i]["PublisherEnterprise_ID"]);
-            //            var enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == getdata.partner)).ToList();
-            //            getdata.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
-
-
-            //            if(orderStatContent==option || option==7)
-            //            {
-            //                    templist.Add(getdata);
-            //            }
-
-            //        }
-            //    }
-            //conn.Close();
-            // return templist;
         }
 
         //获取公司订单数量信息 

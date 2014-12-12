@@ -17,9 +17,9 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         //1发货的订单
         //2签收的订单
         List<orderListClass> GetOrderLists(int orderID);
-        List<TransportListDetailClass> GetTransportDetailByDistributionId(int distributionId);
+        TransportListDetailClass GetTransportDetailByDistributionId(int distributionId);
         //通过Id获取物流的详细信息（包含物流状态，物流的详细信息）
-        List<providerEnterpriseOrderClass> GetOrderIdByProviderEnterpriseid(int providerEnterpriseId, int orderState);
+        List<providerEnterpriseOrderClass> GetOrderIdByProviderEnterpriseid(int providerEnterpriseId);
         //通过Id获取物流的详细信息（包含物流状态，物流的详细信息）
         List<TransportListClass> GetTransportBySearch(int companyId, int category, string keywords);
         //搜索内容获取所有的匹配信息（id，name，以及描述）
