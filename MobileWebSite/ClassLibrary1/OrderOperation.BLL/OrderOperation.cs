@@ -29,6 +29,8 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         public string orderName;
         public string orderContent;
         public string orderTime;
+        public int orderReceiver;
+        public int orderSender;
     }
     public class GetChat
     {
@@ -56,15 +58,15 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
             switch (option)
             {
                 case 0:
-                    return "未完成";
+                //return "未完成";
                 case 1:
-                    return "未完成";
+                //return "未完成";
                 case 2:
-                    return "未完成";
+                //return "未完成";
                 case 3:
-                    return "未完成";
+                //return "未完成";
                 case 4:
-                    return "未完成";
+                //return "未完成";
                 case 5:
                     return "未完成";
                 case 6:
@@ -101,7 +103,7 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         public List<GetDatabaseNum> GetOrderLists(int companyId, int category, int option)
         {
             //0代表发布方，1代表承接方
-            List<Order> orderlist;    
+            List<Order> orderlist;
             var templist = new List<GetDatabaseNum>();  //满足条件的订单
             var tempAllList = new List<GetDatabaseNum>();  //返回所有订单，设置option=7
 
@@ -113,7 +115,7 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
             {
                 orderlist = orderRep.LoadEntities((Order => Order.ProviderEnterprise_ID == companyId)).ToList();
             }
-        
+
             for (int i = 0; i < orderlist.Count; i++)
             {
                 GetDatabaseNum getdata = new GetDatabaseNum();
@@ -125,13 +127,14 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
                 }
                 else if (category == 1)
                 {
-                    getdata.category = 1;
+                    getdata.category = 0;
                     getdata.partner = orderlist.ElementAt(i).PublisherEnterprise_ID;
                 }
                 var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == getdata.orderID)).ToList();
                 int statusnum = statuslist.Count - 1;
                 getdata.orderNum = orderlist.ElementAt(i).Order_Code;
-                getdata.orderStatus = getStatus((int)statuslist[statusnum].OrderStatus_Content);
+                //getdata.orderStatus = getStatus((int)statuslist[statusnum].OrderStatus_Content);
+                getdata.orderStatus = getStatusContent((int)statuslist[statusnum].OrderStatus_Content);
                 var enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == getdata.partner)).ToList();
                 getdata.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
                 int orderStatContent = (int)statuslist[statusnum].OrderStatus_Content;
@@ -160,44 +163,69 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         public List<GetOrderDetails> GetOrderDetailByOrderId(int category, int orderId)
         {
             var orderlist = orderRep.LoadEntities((Orders => Orders.Order_ID == orderId)).ToList();
-            var supplierid = 0;
+            var templist = new List<GetOrderDetails>();
+            var enterlist = new List<Enterprise>();
+            GetOrderDetails orderDetails = new GetOrderDetails();
+            int supplierid = 0;
+
+            orderDetails.orderID = orderlist.ElementAt(0).Order_ID;
+            orderDetails.orderName = orderlist.ElementAt(0).Order_Name;
             if (category == 0)
             {
                 supplierid = orderlist.ElementAt(0).ProviderEnterprise_ID;
+                enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == supplierid)).ToList();
+                orderDetails.category = 1;
+                orderDetails.orderReceiver = orderlist.ElementAt(0).ProviderEnterprise_ID;
+                orderDetails.orderSender = orderlist.ElementAt(0).PublisherEnterprise_ID;
             }
-            else
+            else if (category == 1)
             {
                 supplierid = orderlist.ElementAt(0).PublisherEnterprise_ID;
-            }
-            var enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == supplierid)).ToList();
-            if (category == 0)
-            {
-                var templist = new List<GetOrderDetails>();
-                GetOrderDetails orderDetails = new GetOrderDetails();
+                enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == supplierid)).ToList();
                 orderDetails.category = 0;
-                orderDetails.orderID = orderlist.ElementAt(0).Order_ID;
-                orderDetails.orderName = orderlist.ElementAt(0).Order_Name;
-                orderDetails.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
-                orderDetails.orderTime = orderlist.ElementAt(0).Order_Time;
-                orderDetails.orderNum = orderlist.ElementAt(0).Order_Code;
-                orderDetails.orderContent = orderlist.ElementAt(0).Order_Content;
-                templist.Add(orderDetails);
-                return templist;
+                orderDetails.orderReceiver = orderlist.ElementAt(0).PublisherEnterprise_ID;
+                orderDetails.orderSender = orderlist.ElementAt(0).ProviderEnterprise_ID;
             }
-            else
-            {
-                var templist = new List<GetOrderDetails>();
-                GetOrderDetails orderDetails = new GetOrderDetails();
-                orderDetails.category = 1;
-                orderDetails.orderID = orderlist.ElementAt(0).Order_ID;
-                orderDetails.orderName = orderlist.ElementAt(0).Order_Name;
-                orderDetails.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
-                orderDetails.orderTime = orderlist.ElementAt(0).Order_Time;
-                orderDetails.orderNum = orderlist.ElementAt(0).Order_Code;
-                orderDetails.orderContent = orderlist.ElementAt(0).Order_Content;
-                templist.Add(orderDetails);
-                return templist;
-            }
+            orderDetails.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
+            orderDetails.orderTime = orderlist.ElementAt(0).Order_Time;
+            orderDetails.orderNum = orderlist.ElementAt(0).Order_Code;
+            orderDetails.orderContent = orderlist.ElementAt(0).Order_Content;
+            templist.Add(orderDetails);
+
+            return templist;
+
+            //if (category == 0)
+            //{
+            //    var templist = new List<GetOrderDetails>();
+            //    GetOrderDetails orderDetails = new GetOrderDetails();
+            //    orderDetails.category = 0;
+            //    orderDetails.orderID = orderlist.ElementAt(0).Order_ID;
+            //    orderDetails.orderName = orderlist.ElementAt(0).Order_Name;
+            //    orderDetails.orderReceiver = orderlist.ElementAt(0).ProviderEnterprise_ID;
+            //    orderDetails.orderSender = orderlist.ElementAt(0).PublisherEnterprise_ID;
+            //    orderDetails.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
+            //    orderDetails.orderTime = orderlist.ElementAt(0).Order_Time;
+            //    orderDetails.orderNum = orderlist.ElementAt(0).Order_Code;
+            //    orderDetails.orderContent = orderlist.ElementAt(0).Order_Content;
+            //    templist.Add(orderDetails);
+            //    return templist;
+            //}
+            //else
+            //{
+            //    var templist = new List<GetOrderDetails>();
+            //    GetOrderDetails orderDetails = new GetOrderDetails();
+            //    orderDetails.category = 1;
+            //    orderDetails.orderID = orderlist.ElementAt(0).Order_ID;
+            //    orderDetails.orderName = orderlist.ElementAt(0).Order_Name;
+            //    orderDetails.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
+            //    orderDetails.orderReceiver = orderlist.ElementAt(0).PublisherEnterprise_ID;
+            //    orderDetails.orderSender = orderlist.ElementAt(0).ProviderEnterprise_ID;
+            //    orderDetails.orderTime = orderlist.ElementAt(0).Order_Time;
+            //    orderDetails.orderNum = orderlist.ElementAt(0).Order_Code;
+            //    orderDetails.orderContent = orderlist.ElementAt(0).Order_Content;
+            //    templist.Add(orderDetails);
+            //    return templist;
+            //}
         }
 
         //获取订单的最近一项状态
@@ -223,7 +251,7 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
             var orderlist = orderRep.LoadEntities((Orders => Orders.Order_ID == orderid)).ToList();
             var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == orderid)).ToList();
             var templist = new List<OrderSta>();
-            for (int i = 0; i < statuslist.Count; i++)
+            for (int i = statuslist.Count - 1; i >= 0; i--)
             {
                 OrderSta orderS = new OrderSta();
                 orderS.orderTime = statuslist.ElementAt(i).OrderStatus_Time;
@@ -296,78 +324,6 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
                 }
             }
             return temp_GetList;
-
-            // var templist = new List<GetDatabaseNum>();
-
-            // SqlConnection conn = new SqlConnection("Data Source=10.30.40.246; Initial Catalog=CPCAppDatazlh;Persist Security Info=True;User ID=sa;Password=123456;");  //连接数据库
-            // conn.Open(); //打开数据库
-
-            //    if (category == 0)
-            //    {
-            //        SqlDataAdapter sda1 = new SqlDataAdapter("select * from Orders where Order_Code like '%" + keywords + "%'" + "or Order_Name  like '%"+keywords+"%'" +"and PublisherEnterprise_ID=" + enterpriseid, conn);
-
-            //        DataTable Data1 = new DataTable();  //声明一个DataTable变量叫Data 
-            //        sda1.Fill(Data1);  //填充这个Data 
-            //        GetDatabaseNum getdata;
-            //        for (int i = 0; i < Data1.Rows.Count; i++)
-            //        {
-            //            getdata = new GetDatabaseNum();
-            //            getdata.orderNum = Data1.Rows[i]["Order_Code"].ToString();
-            //            getdata.orderID = Convert.ToInt32(Data1.Rows[i]["Order_ID"]);
-
-            //            var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == getdata.orderID)).ToList();
-            //            int statusnum = statuslist.Count - 1;
-            //            int orderStatContent = (int)statuslist[statusnum].OrderStatus_Content;
-            //            getdata.orderStatus = getStatus(orderStatContent);
-
-
-            //            getdata.category = 1;
-            //            getdata.partner = Convert.ToInt32(Data1.Rows[i]["ProviderEnterprise_ID"]);
-            //            var enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == getdata.partner)).ToList();
-            //            getdata.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
-
-            //            if (orderStatContent == option || option == 7)
-            //            {
-            //                templist.Add(getdata);
-            //            }
-
-
-
-            //        }
-            //    }
-            //    else
-            //    {
-            //        SqlDataAdapter sda1 = new SqlDataAdapter("select * from Orders where Order_Code like '%" + keywords + "%'"+ "or Order_Name like '%"+keywords+"%'"+ "and ProviderEnterprise_ID=" + enterpriseid, conn);
-            //        DataTable Data1 = new DataTable();  //声明一个DataTable变量叫Data 
-            //        sda1.Fill(Data1);  //填充这个Data 
-            //        GetDatabaseNum getdata;
-            //        for (int i = 0; i < Data1.Rows.Count; i++)
-            //        {
-            //            getdata = new GetDatabaseNum();
-            //            getdata.orderNum = Data1.Rows[i]["Order_Code"].ToString();
-            //            getdata.orderID = Convert.ToInt32(Data1.Rows[i]["Order_ID"]);
-
-            //            var statuslist = statusRep.LoadEntities((OrderStatus => OrderStatus.Order_ID == getdata.orderID)).ToList();
-            //            int statusnum = statuslist.Count - 1;
-            //            int orderStatContent = (int)statuslist[statusnum].OrderStatus_Content;
-            //            getdata.orderStatus = getStatus(orderStatContent);
-
-
-            //            getdata.category = 1;
-            //            getdata.partner = Convert.ToInt32(Data1.Rows[i]["PublisherEnterprise_ID"]);
-            //            var enterlist = enterRep.LoadEntities((Enterprises => Enterprises.Enterprise_ID == getdata.partner)).ToList();
-            //            getdata.orderSupplier = enterlist.ElementAt(0).Enterprise_Name;
-
-
-            //            if(orderStatContent==option || option==7)
-            //            {
-            //                    templist.Add(getdata);
-            //            }
-
-            //        }
-            //    }
-            //conn.Close();
-            // return templist;
         }
 
         //获取公司订单数量信息 
@@ -375,82 +331,47 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         //option 0 代表未完成的订单 1代表已完成的订单
         public int GetOrderNum(int EnterpriseId, int category, int option)
         {
-            if (category == 0)
+            var tempOrderList = new List<Order>();
+            int compelete = 0;
+            int notcompelete = 0;
+            try
             {
-                int compelete = 0;
-                int notcompelete = 0;
-                try
+                if (category == 0)
                 {
-                    var tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID == EnterpriseId).ToList();
-                    foreach (var tempOrder in tempOrderList)
-                    {
-                        var statuslist = statusRep.LoadEntities(OrderStatus => OrderStatus.Order_ID == tempOrder.Order_ID).ToList();
+                    tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID == EnterpriseId).ToList();
+                }
+                else if (category == 1)
+                {
+                    tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID == EnterpriseId).ToList();
+                }
+                foreach (var tempOrder in tempOrderList)
+                {
+                    var statuslist = statusRep.LoadEntities(OrderStatus => OrderStatus.Order_ID == tempOrder.Order_ID).ToList();
 
-                        int lastStatus = (int)statuslist.LastOrDefault().OrderStatus_Content;
-                        if (lastStatus == 6)
-                        {
-                            compelete++;
-
-                        }
-                        else
-                        {
-                            notcompelete++;
-                        }
-                    }
-                    if (option == 0)
+                    int lastStatus = (int)statuslist.LastOrDefault().OrderStatus_Content;
+                    if (lastStatus == 6)
                     {
-                        return notcompelete;
+                        compelete++;
+
                     }
                     else
                     {
-                        return compelete;
+                        notcompelete++;
                     }
                 }
-                catch (System.Exception ex)
+                if (option == 0)
                 {
-                    return 0;
+                    return notcompelete;
+                }
+                else
+                {
+                    return compelete;
                 }
             }
-            else if (category == 1)
-            {
-
-                int compelete = 0;
-                int notcompelete = 0;
-                try
-                {
-                    var tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID == EnterpriseId).ToList();
-                    foreach (var tempOrder in tempOrderList)
-                    {
-                        var statuslist = statusRep.LoadEntities(OrderStatus => OrderStatus.Order_ID == tempOrder.Order_ID).ToList();
-                        int lastStatus = (int)statuslist.LastOrDefault().OrderStatus_Content;
-                        if (lastStatus == 6)
-                        {
-                            compelete++;
-
-                        }
-                        else
-                        {
-                            notcompelete++;
-                        }
-                    }
-                    if (option == 0)
-                    {
-                        return notcompelete;
-                    }
-                    else
-                    {
-                        return compelete;
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    return 0;
-                }
-            }
-            else
+            catch (System.Exception ex)
             {
                 return 0;
-            }
+            }         
         }
     }
 }

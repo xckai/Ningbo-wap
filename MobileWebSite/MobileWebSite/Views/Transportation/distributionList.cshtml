@@ -32,33 +32,26 @@
         </div>
 
         <script id="distributionListTemplate" type="script/x-kendo-template">
-            <div class="item">
-                <div class="item-inside">
-                    <p1> 物流编号：#: TransportNumber#</p1>
-                    <a class="replyDistrubutList" data-role="button" onclick=logisticsContent(#:distributionId#)> 订单详情 </a>
+            <div class="itemDistributionList">
+                <div class="item-insideDistributionList">
+                    <p1> 物流编号：#: distributionId#</p1>
                 </div>
+
                 # if( category == 0){#
                     <h4> 发货方：#: consignor# </h4>
                 #} else if( category == 1){#
                     <h4> 收货方：#: consignee# </h4>
                 #}#
                 <h4> 物流状态：#: status# </h4>
+                <div class="item-inside2">
+                    <a class="replyDistrubutList" data-role="button" onclick=logisticsContent(#:distributionId#)> 订单详情 </a>
+                </div>
             </div>
         </script>
 
         <script>
-           // location.reload();
-            String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
-                var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
-                var r = this.substr(this.indexOf("\?") + 1).match(reg);
-                if (r != null) return unescape(r[2]); return null;
-            }
-            //var str = location.search;  //获取当前页面url？后面的数值
-            var str = window.location.href;
-            var orderId = str.GetValue("option")   //获取订单号
-            var category = str.GetValue("category"); //获取商家类型，0代表发布方，1代表承接方
-            orderId = parseInt(orderId);
-
+            var orderId = "@ViewBag.OrderId";   //获取订单号
+            var category = "@ViewBag.Catergory";
             var orderListData = new kendo.data.DataSource({
                 transport: {
                     read: {
@@ -73,24 +66,36 @@
                 },
             });
 
-
-            console.info(orderId + " 输出 = " + category);
-
             function logisticsContent(distributionId) {
                 var urlbase = "/../Transportation/TransportDetails?distributionID=";
                 urlbase += distributionId;
                 urlbase += "&category=" + category;
-                kendo.mobile.application.replace(urlbase, "slide");
-               // app.navigate(urlbase,"slide");
-                //location.replace(urlbase); //替换当前标签页
-                console.info(urlbase);
+                app.navigate(urlbase, "slide");
             }
+
+            /*读取url的方法*/
+            //String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
+            //    var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
+            //    var r = this.substr(this.indexOf("\?") + 1).match(reg);
+            //    if (r != null) return unescape(r[2]); return null;
+            //}
+            ////var str = location.search;  //获取当前页面url？后面的数值
+            //var str = window.location.href;
+            //var orderId = str.GetValue("option");   //获取订单号
         </script>
     </div>
 
-
-
     <style scoped>
+        .item-inside2 {
+            width: 95%;
+            height: 35px;
+            margin: 5px 10px 10px 7px;
+            /*//border-top: 2px solid #efeff4;*/
+            /*//border-top-right-radius: 4px;*/
+            /*border-bottom: 2px solid #efeff4;*/
+            background-color: #fff;
+        }
+
         .replyDistrubutList {
             float: right;
             margin-right: 10px;
@@ -116,6 +121,42 @@
                     float: left;
                     margin-right: 10px;
                 }
+
+        .itemDistributionList {
+            background-color: #fff;
+            width: 100%;
+            border-radius: 20px;
+            padding: 5px 5px 7px 7px;
+        }
+
+            .itemDistributionList p {
+                /*float: left;*/
+                /*color: #808080;*/
+                margin: 10px 20px 15px 15px;
+                font-size: 16px;
+                font-style: normal;
+                font-family: Helvetica;
+                /*margin-top: 5px;*/
+                /*margin-left: 8px;*/
+            }
+
+        .item-insideDistributionList {
+            width: 95%;
+            height: 35px;
+            margin: 5px 10px 10px 7px;
+            /*border-top: 2px solid #efeff4;*/
+            border-bottom: 2px solid #efeff4;
+            background-color: #fff;
+        }
+
+            .item-insideDistributionList p1 {
+                float: left;
+                color: #808080;
+                font-size: 16px;
+                font-style: normal;
+                margin-top: 5px;
+                margin-left: 8px;
+            }
     </style>
 </body>
 </html>

@@ -26,58 +26,52 @@
 </head>*@
 <body>
     <div id="actionsheet-view" data-role="view" data-title="物流单详情" data-reload="true">
-        <h3 id="actionResult"></h3>
-        <ul data-role="listview" data-source="TransportSource" data-template="inboxItem" class="inboxList"></ul>
+        <div style="margin-top: 10px">
+            <ul id="listsource" class="inboxListTransportDetail" data-role="listview" data-source="TransportDetailsSource"
+                data-template="TransportDetailsTemplate" data-endless-scroll="false"></ul>
+        </div>
     </div>
 
-    <script id="inboxItem" type="script/x-kendo-template">
-        <div class="item">
-            <p><b>物流名称：</b>#: Distribution_Name#</p>
-            <p><b>物流描述：</b>#: Distribution_Content# </p>
-            <p><b>发货地址：</b>#: Source_Addr# </p>
-            <p><b> 收货地址：</b>#: Destination_Addr# </p>
-            <p><b>发货数量：</b>#: Distribution_Amount#</p>
-            <p><b>物流状态：</b>#: Distribution_State#</p>
-            <p><b>订单生成时间：</b>#:Created_Time#</p>
-            <p><b>订单发出时间：</b>#:Send_Time#</p>
-            <p><b>收货时间：</b>#: Receive_Time  #</p>
+    <script id="TransportDetailsTemplate" type="script/x-kendo-template">
+    <div class="item">
+        <p><b>物流名称：</b>#: Distribution_Name#</p>
+        <p><b>物流描述：</b>#: Distribution_Content# </p>
+        <p><b>发货地址：</b>#: Source_Addr# </p>
+        <p><b> 收货地址：</b>#: Destination_Addr# </p>
+        <p><b>发货数量：</b>#: Distribution_Amount#</p>
+        <p><b>物流状态：</b>#: Distribution_State#</p>
+        <p><b>订单生成时间：</b>#:Created_Time#</p>
+        <p><b>订单发出时间：</b>#:Send_Time#</p>
+        <p><b>收货时间：</b>#: Receive_Time  #</p>
 
-        <div class="item-insideTransportDetails">
-            # if(Distribution_State == "配送单生成" && category == 1){#
-                <a id  = "changeState" class="replyTransportDetails"  name = "changeState" data-role="button" target="_self"  data-click="changeState" value="1"> 点击发货</a>
-             # } else if (Distribution_State == "物品已经发货" && category == 0){#
-                    <a id= "deliveryGoods" class="replyTransportDetails" name = "deliveryGoods"  data-role="button"   data-click="deliveryGoods" value="2">确认收货</a>
-             #}#
+    <div class="item-insideTransportDetails">
+        @*# if(Distribution_State == "配送单生成" && category == 1){#
+            <a id  = "changeState" data-role="button" class="replyTransportDetails"
+                    name = "changeState"  target="_self"
+                    data-click="changeState" value="1"> 点击发货</a>
+         # } else if (Distribution_State == "物品已经发货" && category == 0){#
+                <a id= "deliveryGoods" data-role="button"class="replyTransportDetails"
+                    name = "deliveryGoods"
+                    data-click="deliveryGoods" value="2">确认收货</a>
+         #}#*@
 
-            <a  id = "orderDownLoad"
-               class="replyTransportDetails"
-               data-role="button"
-            @*href="#:Distribution_Download_Addr#"*@
-            @*target="_self"*@
-              data-click="distributionDownload"
-            @*data-actionsheet-context="#: Distribution_Download_Addr#"*@
-            > 订单下载</a>
-         </div>
-        <br />
-        </div>
+        <a  id = "orderDownLoad"
+                data-role="button"
+                class="replyTransportDetails"
+                href="/..#:Distribution_Download_Addr #"
+                @*data-target="_blank"*@
+                @*onclick=distributionDownload(#:Distribution_Download_Addr #)*@> 订单下载</a>
+     </div>
+    <br />
+    </div>
 
     </script>
 
     <script>
-        // $(document).ready(function () {
-        String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
-            var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
-            var r = this.substr(this.indexOf("\?") + 1).match(reg);
-            if (r != null) return unescape(r[2]); return null;
-        }
-        //var str = location.search;  //获取当前页面url？后面的数值
-        var str = window.location.href;
-        str = decodeURI(str);   //对url进行解码
-        var distributionId = str.GetValue("distributionID");
-        var category = str.GetValue("category");
-        //alert(distributionId);
-       // console.info(distributionId + " asdfasdfasdfa");
-        var TransportSource = new kendo.data.DataSource({
+        var distributionId = "@ViewBag.DistributionID";
+        var category = "@ViewBag.Category";
+
+        var TransportDetailsSource = new kendo.data.DataSource({
             transport: {
                 read: {
                     type: "POST",
@@ -92,78 +86,84 @@
         });
         //console.info(TransportSource);
 
-        function distributionDownload(e) {
-            $("#actionResult").click(
-                    alert("asdfasdfasdfasd")
-                );
+        function distributionDownload(downloadAddress) {
+            //$("#actionResult").click(
+            console.info(downloadAddress);
+            alert(downloadAddress);
+            //    );
+
         }
 
-        function deliveryGoods(e) {       //确认收货
-            $("#deliveryGoods").click(
-                $.ajax({
-                    url: "/Transportation/changeTransportState",
-                    method: "POST",
-                    data: {
-                        state: 2,
-                        distributionId: distributionId
-                    },
-                    error: function (request) {
-                        alert("Connection error");
-                    },
-                    success: function (msg) {
-                        kendo.mobile.application.replace("/../Transportation/showAddSuccess?msg=" + msg);
-                    }
-                }
-                )
-                );
-        }
+        //function deliveryGoods(e) {       //确认收货
+        //    $("#deliveryGoods").click(
+        //        $.ajax({
+        //            url: "/Transportation/changeTransportState",
+        //            method: "POST",
+        //            data: {
+        //                state: 2,
+        //                distributionId: distributionId
+        //            },
+        //            error: function (request) {
+        //                alert("Connection error");
+        //            },
+        //            success: function (msg) {
+        //                //kendo.mobile.application.replace
+        //                app.navigate("/../Transportation/showAddSuccess?msg=" + msg);
+        //            }
+        //        })
+        //        );
+        //}
 
+        //function changeState(e) {  //开始发货
+        //    $("#changeState").click(
+        //        $.ajax({
+        //            url: "/Transportation/changeTransportState",
+        //            method: "POST",
+        //            data: {
+        //                state: 1,
+        //                distributionId: distributionId
+        //            },
+        //            error: function (request) {
+        //                alert("Connection error");
+        //            },
+        //            success: function (msg) {
+        //                //kendo.mobile.application.replace
+        //                app.navigate("/../Transportation/showAddSuccess?msg=" + msg);
+        //            }
+        //        })
+        //    );
+        //}
 
-        function changeState(e) {  //开始发货
-            $("#changeState").click(
-                $.ajax({
-                    url: "/Transportation/changeTransportState",
-                    method: "POST",
-                    data: {
-                        state: 1,
-                        distributionId: distributionId
-                    },
-                    error: function (request) {
-                        alert("Connection error");
-                    },
-                    success: function (msg) {
-                        kendo.mobile.application.replace("/../Transportation/showAddSuccess?msg=" + msg);
-                    }
-                })
-            );
-        }
+        // $(document).ready(function () {
+        ///*获取url*/
+        //String.prototype.GetValue = function (para) { //将url ？ 后面的链接以&符号进行分割
+        //    var reg = new RegExp("(^|&)" + para + "=([^&]*)(&|$)");
+        //    var r = this.substr(this.indexOf("\?") + 1).match(reg);
+        //    if (r != null) return unescape(r[2]); return null;
+        //}
+        ////var str = location.search;  //获取当前页面url？后面的数值
+        //var str = window.location.href;
+        //str = decodeURI(str);   //对url进行解码
+        //var distributionId = str.GetValue("distributionID");
+        //var category = str.GetValue("category");
     </script>
  
     <style scoped>
         .replyTransportDetails {
-            float: left;
-            margin: 1.9em 2.7em 0.5em 0.7em;
+            float: right;
+            margin-right: 10px;
+            /*margin: 1.9em 2.7em 0.5em 0.7em;*/
         }
 
         .item-insideTransportDetails {
             width: 95%;
-            height: 35px;
-            font-size: 0.8px;
-            margin: 5px 10px 10px 7px;
+            height: 35px;           
             border-top: 2px solid #efeff4;
-            margin: 2px 10px 10px 7px;
+            margin: 20px 10px 10px 10px;
             border-bottom: 0px solid #efeff4;
             background-color: #fff;
         }
 
-            .item-insideTransportDetails p1 {
-                float: left;
-                color: #808080;
-                font-size: 16px;
-                font-style: normal;
-                margin-top: 5px;
-                margin-left: 8px;
-            }
     </style>
 </body>
 </html>

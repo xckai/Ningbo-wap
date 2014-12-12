@@ -25,17 +25,15 @@ namespace MobileWebSite.Controllers
             var enterpriseID = 10001;
             try
             {
-                 enterpriseID = int.Parse(Session["userId"].ToString().Trim());   //获得当前session中的企业id               
+                enterpriseID = int.Parse(Session["userId"].ToString().Trim());   //获得当前session中的企业id               
             }
             catch
             {
-                 enterpriseID = 10001;   //设置一个默认的企业id，实际上线时需要做一个异常处理机制
-                //var tempTransportationLists = transportOper.GetTransportLists(enterpriseID, category); //, transportState
-                //return Json(tempTransportationLists, JsonRequestBehavior.AllowGet);
+                enterpriseID = 10001;   //设置一个默认的企业id，实际上线时需要做一个异常处理机制
             }
 
             List<TransportListClass> tempTransportationLists;
-            if (searchValue.Equals("notsearch") || searchValue=="")
+            if (searchValue.Equals("notsearch") || searchValue == "")
             {
                 tempTransportationLists = transportOper.GetTransportLists(enterpriseID, category); //, transportState
             }
@@ -48,38 +46,61 @@ namespace MobileWebSite.Controllers
 
         public JsonResult GetOrderList(int orderID)
         {
-            var tempOrderLists = transportOper.GetOrderLists(orderID);                
+            var tempOrderLists = transportOper.GetOrderListsByDistributionId(orderID);
             return Json(tempOrderLists, JsonRequestBehavior.AllowGet);
         }
 
         /*获取订单详情, 根据订单号*/
         public JsonResult GetTransportDetails(int distributionId)
         {
-                //distributionId = 1;  //设置一个默认的企业id，实际上线时需要做一个异常处理机制
-                var tempTransportationDetail = transportOper.GetTransportDetailByDistributionId(distributionId);
-                return Json(tempTransportationDetail, JsonRequestBehavior.AllowGet);
+            //distributionId = 1;  //设置一个默认的企业id，实际上线时需要做一个异常处理机制
+            var tempTransportDetailList = new List<TransportListDetailClass>();
+            var tempTransportationDetail = transportOper.GetTransportDetailByDistributionId(distributionId);
+            tempTransportDetailList.Add(tempTransportationDetail);
+            return Json(tempTransportDetailList, JsonRequestBehavior.AllowGet);
         }
 
         /*获取订单号*/
         public JsonResult GetOrderID()
         {
-            int orderState = 0;
+            //int orderState = 0;
             int ProviderEnterpriseID = 10001;   //获得当前session中的企业id
             try
             {
-                if (!Session["userId"].Equals(null))
+                if (!Session["enId"].Equals(null))
                 {
-                    ProviderEnterpriseID = int.Parse(Session["userId"].ToString().Trim());   //获得当前session中的企业id
+                    ProviderEnterpriseID = int.Parse(Session["enId"].ToString().Trim());   //获得当前session中的企业id
                 }
             }
             catch
             {
                 ProviderEnterpriseID = 10001;
             }
-            var tempOrderInfor = transportOper.GetOrderIdByProviderEnterpriseid(ProviderEnterpriseID, orderState);
+            var tempOrderInfor = transportOper.GetOrderIdByProviderEnterpriseid(ProviderEnterpriseID);
             return Json(tempOrderInfor, JsonRequestBehavior.AllowGet);
         }
 
+        public List<Enterprise> GetEnterprise(int sender, int receiver, int catgory)
+        {
+            List<Enterprise> tempEnterprise = new List<Enterprise>();
+            EnterpriseRepository enterpriseRep = new EnterpriseRepository();   //企业model
+            //int ProviderEnterpriseID = int.Parse(Session["enId"].ToString().Trim());
+            int tempenteprise;
+            if (catgory == 0)
+            {
+                tempenteprise = receiver;
+            }
+            else if (catgory == 1)
+            {
+                tempenteprise = sender;
+            }
+            else
+            {
+                tempenteprise = int.Parse(Session["enId"].ToString().Trim());
+            }
+            tempEnterprise = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID == tempenteprise)).ToList();
+            return tempEnterprise;
+        }
 
         /*向数据库中添加一条新的物流记录
          *
@@ -113,9 +134,16 @@ namespace MobileWebSite.Controllers
                 // transportData.Created_Time = Request.Params["createdTime"];
                 // transportData.Send_Time = Request.Params["sendTime"];
                 transportData.Send_Time = DateTime.Now.ToString("f");
+                //if (Request.Params["orderID"] != null)
+                //{
                 transportData.Order_ID = int.Parse(Request.Params.GetValues("orderID")[0]);
+                //}
+                //else
+                //{
+                //    transportData.Order_ID = -1;
+                //}
                 transportData.Receive_Time = "";
-                db.Distribution.Add(transportData);
+                //db.Distribution.Add(transportData);
                 string addr = Session["enterpriseID"] + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pdf";//企业ID+当前时间为订单时间
 
                 string pdfpath = Path.Combine(HttpContext.Server.MapPath("../DistributionFile"), addr);
@@ -126,7 +154,9 @@ namespace MobileWebSite.Controllers
                 {
                     Directory.CreateDirectory(Server.MapPath("../DistributionFile"));
                 }
-                DistributionCreation dis2pdf = new DistributionCreation(transportData, pdfpath);
+                string consignee = Request.Params["consignee"];
+                int ProviderEnterpriseID = int.Parse(Session["enId"].ToString().Trim());
+                DistributionCreation dis2pdf = new DistributionCreation(transportData, pdfpath, consignee, ProviderEnterpriseID);
                 Thread thread = new Thread(dis2pdf.Createpdf);
                 thread.IsBackground = true;
                 thread.Start();
@@ -137,8 +167,8 @@ namespace MobileWebSite.Controllers
                 return Content("0");
             }
         }
-      
-       
+
+
 
         /*
          *修改物流状态
@@ -171,26 +201,46 @@ namespace MobileWebSite.Controllers
             }
         }
 
-        public ActionResult Index()
+        public ActionResult Index(int category, string searchValue)
         {
+            ViewBag.Category = category;
+            ViewBag.SearchValue = searchValue;
             return View();
         }
-        public ActionResult TransportDetails()
+        public ActionResult TransportDetails(int distributionID, int category)
         {
+            ViewBag.Category = category;
+            ViewBag.DistributionID = distributionID;
             return View();
         }
 
-        public ActionResult AddTransportList()
-        {
+        public ActionResult AddTransportList(int orderId, int Sender, int Receiver, int category)
+        { //
+            var provideEnterprise = GetEnterprise(Sender, Receiver, category);
+            var publishEnterprise = GetEnterprise(Receiver, Sender, category);
+            if (orderId != -1)
+            {
+                var tempOrderLists = transportOper.GetOrderListsByDistributionId(orderId);
+                ViewBag.OrderName = tempOrderLists.ElementAt(0).orderName;
+            }
+            ViewBag.OrderId = orderId;
+            ViewBag.Category = category;
+            ViewBag.provideEnterpriseName = provideEnterprise.ElementAt(0).Enterprise_Name;
+            ViewBag.provideEnterpriseAddress = provideEnterprise.ElementAt(0).Enterprise_Addr;
+            ViewBag.publishEnterpriseName = publishEnterprise.ElementAt(0).Enterprise_Name;
+            ViewBag.publishEnterpriseAddress = publishEnterprise.ElementAt(0).Enterprise_Addr;
             return View();
         }
 
-        public ActionResult showAddSuccess()
+        public ActionResult showAddSuccess(int msg)
         {
+            ViewBag.Message = msg;
             return View();
         }
-        public ActionResult distributionList()
+        public ActionResult distributionList(int orderId, int category)
         {
+            ViewBag.OrderId = orderId;
+            ViewBag.Catergory = category;
             return View();
         }
     }

@@ -58,7 +58,7 @@
             <iframe id="myIframe" src=" " height ="100%" width="100%" frameborder=”no” border=”0″ marginwidth=”0″ marginheight=”0″></iframe>*@
     </div>
 
-    <div data-role="drawer" id="my-drawer" style="width: 230px;  data-views =" ['drawer-myiframe', 'drawer-sendorder' , 'drawer-sendordercomplete' ,'drawer-sendordernotcomplete','drawer-receiveorder', 'drawer-receiveordercomplete' ,'drawer-receiveordernotcomplete','drawer-sendtranslation','drawer-sendtranslationcompelete','drawer-sendtranslationnotcomplete','drawer-receivetranslation','drawer-receivetranslationcompelete','drawer-receivetranslationnotcomplete']">
+    <div data-role="drawer" id="my-drawer" style="width: 230px;  data-views = "['drawer-myiframe', 'drawer-sendorder', 'drawer-sendordercomplete','drawer-sendordernotcomplete','drawer-receiveorder', 'drawer-receiveordercomplete' ,'drawer-receiveordernotcomplete', 'drawer-sendtranslation', 'drawer-sendtranslationcompelete', 'drawer-sendtranslationnotcomplete', 'drawer-receivetranslation', 'drawer-receivetranslationcompelete', 'drawer-receivetranslationnotcomplete']"">
         <ul data-role="listview" data-type="group" style="">
             <li>
                 <ul>
@@ -77,16 +77,16 @@
             <li>
                 订单管理
                 <ul>
-                    <li data-icon="star"><a href="/../OrderDemo/Index?category=0" data-transition="none">发出的订单</a></li>
-                    <li data-icon="compose"><a href="/../OrderDemo/Index?category=1" data-transition="none">接受的订单</a></li>
+                    <li data-icon="star"><a href="/../OrderDemo/Index?category=0&searchValue=&select=" data-transition="none">发出的订单</a></li>
+                    <li data-icon="compose"><a href="/../OrderDemo/Index?category=1&searchValue=&select=" data-transition=" none">接受的订单</a></li>
                 </ul>
             </li>
             <li>
                 物流管理
                 <ul>
-                    <li data-icon="sent"><a href="/../Transportation/AddTransportList" data-transition="none">我要发货</a></li>
-                    <li data-icon="sent"><a id="sentTransp" href="/../Transportation/Index?category=1" data-transition="none">发货信息查看</a></li>
-                    <li data-icon="trash"><a id ="receiveTransp" href="/../Transportation/Index?category=0" data-transition="none">收货信息查看</a></li>
+                    <li data-icon="sent"><a href="/../Transportation/AddTransportList?orderId=-1&category=-1&sender=-1&receiver=-1" data-transition="none">我要发货</a></li>
+                    <li data-icon="sent"><a id="sentTransp" href="/../Transportation/Index?category=1&searchValue=" data-transition="none">发货信息查看</a></li>
+                    <li data-icon="trash"><a id="receiveTransp" href="/../Transportation/Index?category=0&searchValue=" data-transition="none">收货信息查看</a></li>
                 </ul>
             </li>
         </ul>

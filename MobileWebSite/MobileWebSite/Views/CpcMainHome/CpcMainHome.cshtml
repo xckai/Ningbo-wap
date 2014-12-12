@@ -62,12 +62,12 @@
                 <div class="item-inside-CpcMainHome">
                     <span style="font-size:medium;">
                         您发出的订单有 @ViewBag.sendordernum 条还未完成
-                        <a id="sendorder" data-role="button" href="/../OrderDemo/Index?category=0" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
+                        <a id="sendorder" data-role="button" href="/../OrderDemo/Index?category=0&searchValue=&select=" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
                     </span>
                     <br />
                     <div style="margin-top:10px;margin-bottom:5px">
                         <span style="font-size:medium;">您接受的订单有 @ViewBag.getordernum 条还未完成</span>
-                        <a id="receiveorder" href="/../OrderDemo/Index?category=1" data-role="button" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
+                        <a id="receiveorder" href="/../OrderDemo/Index?category=1&searchValue=&select=" data-role="button" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
                     </div>
                 </div>
             </div>
@@ -78,12 +78,12 @@
                 <div class="item-inside-CpcMainHome">
                     <span style="font-size:medium;">
                         您发出的货物有 @ViewBag.sendtransporationnum 条还未被确认收货
-                        <a id="sendtranslation" href="/../Transportation/Index?category=1" data-role="button" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
+                        <a id="sendtranslation" href="/../Transportation/Index?category=1&searchValue=" data-role="button" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
                     </span>
                     <br />
                     <div style="margin-top:10px;margin-bottom:5px">
                         <span style="font-size:medium;">您接受的货物有 @ViewBag.gettransporationnum 条未确认收货</span>
-                        <a id="receivetranslation" href="/../Transportation/Index?category=0" data-role="button" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
+                        <a id="receivetranslation" href="/../Transportation/Index?category=0&searchValue=" data-role="button" style="font-size:8px;clear:right;float:right;margin-right:10px">点击查看</a>
                     </div>
                 </div>
             </div>

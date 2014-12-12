@@ -22,8 +22,9 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
 
     public class orderListClass
     {
-        public int distributionId; //
-        public int orderID;
+        public int distributionId; //物流单号
+        public int orderID; //订单id
+        public string orderName; //
         public string TransportNumber; //物流编号
         public string consignor;  //发货方
         public string consignee; //收货方
@@ -72,20 +73,22 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         private List<Order> orderList = new List<Order>();   //订单列表
         private List<OrderStatus> orderStatuList = new List<OrderStatus>(); //订单状态列表
         private List<EnterpriseRepository> enterpriseList = new List<EnterpriseRepository>(); //企业列表
-        public List<orderListClass> GetOrderLists(int orderID)
+        public List<orderListClass> GetOrderListsByDistributionId(int orderID)
         {
             var tempOrderList = new List<orderListClass>();
             transportList = transportRep.LoadEntities((Distribution => Distribution.Order_ID == orderID)).ToList();
-            for (int i = 0; i < transportList.Count; i++)
+            for (int i = transportList.Count - 1; i >= 0; i--)
             {
                 var tempTempOrderlists = new orderListClass();
                 tempTempOrderlists.orderID = transportList.ElementAt(i).Order_ID;
+
                 tempTempOrderlists.distributionId = transportList.ElementAt(i).Distribution_ID;
                 orderList = orderRep.LoadEntities((Order => Order.Order_ID == orderID)).ToList();
                 tempTempOrderlists.consignor = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
                                       == orderList.ElementAt(0).ProviderEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(发货方)
                 tempTempOrderlists.consignee = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
                                          == orderList.ElementAt(0).PublisherEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(收货方)
+                tempTempOrderlists.orderName = orderList.ElementAt(0).Order_Name;
                 transpStatuTypes = transportList.ElementAt(i).Distribution_State;
                 if (transpStatuTypes.ToString().Equals("DistributionCreated"))
                 {
@@ -108,121 +111,93 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         {
             var tempTransportList = new List<TransportListClass>();
             //0代表发布方，1代表承接方
-            if (category == 1)
-            {
-                orderList = orderRep.LoadEntities((Order => Order.ProviderEnterprise_ID == companyId)).ToList(); //根据企业号找到订单
-                for (int i = 0; i < orderList.Count; i++)
-                {
-                    var tempTempTransportlist = new TransportListClass(); //物流简单信息
-                    transportList = transportRep.LoadEntities((Distribution => Distribution.Order_ID
-                        == orderList.ElementAt(i).Order_ID)).ToList();   //根据找到的订单id找出物流订单
-                    for (int j = 0; j < transportList.Count; j++)
-                    {
-                        tempTempTransportlist.distributionId = transportList.ElementAt(j).Distribution_ID;
-                        tempTempTransportlist.TransportNumber = orderList.ElementAt(i).Order_Code; // 物流单号
-                        tempTempTransportlist.consignor = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
-                                   == orderList.ElementAt(i).ProviderEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(发货方)
-                        tempTempTransportlist.consignee = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
-                                    == orderList.ElementAt(i).PublisherEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(收货方)
-                        transpStatuTypes = transportList.ElementAt(j).Distribution_State;
-                        if (transpStatuTypes.ToString().Equals("DistributionCreated"))
-                        {
-                            tempTempTransportlist.status = DistributionCreated;
-                        }
-                        else if (transpStatuTypes.ToString().Equals("Distributing"))
-                        {
-                            tempTempTransportlist.status = DistributionBeenSent;
-                        }
-                        else if (transpStatuTypes.ToString().Equals("Received"))
-                        {
-                            tempTempTransportlist.status = DistributionBeenReceived;
-                        }
-                        tempTransportList.Add(tempTempTransportlist);
-                    }
-                }
-                return tempTransportList;
-            }
-            else if (category == 0)
+            if (category == 0)
             {
                 orderList = orderRep.LoadEntities((Order => Order.PublisherEnterprise_ID == companyId)).ToList(); //根据企业号找到订单
-                for (int i = 0; i < orderList.Count; i++)
+            }
+            else if (category == 1)
+            {
+                orderList = orderRep.LoadEntities((Order => Order.ProviderEnterprise_ID == companyId)).ToList(); //根据企业号找到订单
+            }
+
+            for (int i = orderList.Count - 1; i >= 0; i--)
+            {
+                transportList = transportRep.LoadEntities((Distribution => Distribution.Order_ID
+                    == orderList.ElementAt(i).Order_ID)).ToList();   //根据找到的订单id找出物流订单
+                //tempTempTransportlist.distributionId = transportList.ElementAt(i).Distribution_ID;
+                for (int j = transportList.Count - 1; j >= 0; j--)
                 {
                     var tempTempTransportlist = new TransportListClass(); //物流简单信息
-                    transportList = transportRep.LoadEntities((Distribution => Distribution.Order_ID
-                        == orderList.ElementAt(i).Order_ID)).ToList();   //根据找到的订单id找出物流订单
-                    for (int j = 0; j < transportList.Count; j++)
+                    tempTempTransportlist.distributionId = transportList.ElementAt(j).Distribution_ID;
+                    tempTempTransportlist.TransportNumber = orderList.ElementAt(i).Order_Code; // 物流单号
+                    tempTempTransportlist.consignor = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
+                               == orderList.ElementAt(i).ProviderEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(发货方)
+                    tempTempTransportlist.consignee = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
+                                == orderList.ElementAt(i).PublisherEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(收货方)
+                    transpStatuTypes = transportList.ElementAt(j).Distribution_State;
+                    if (transpStatuTypes.ToString().Equals("DistributionCreated"))
                     {
-                        tempTempTransportlist.distributionId = transportList.ElementAt(j).Distribution_ID;
-                        tempTempTransportlist.TransportNumber = orderList.ElementAt(i).Order_Code; // 物流单号
-                        tempTempTransportlist.consignor = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
-                                   == orderList.ElementAt(i).ProviderEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(发货方)
-                        tempTempTransportlist.consignee = enterpriseRep.LoadEntities((EnterpriseRepository => EnterpriseRepository.Enterprise_ID
-                                    == orderList.ElementAt(i).PublisherEnterprise_ID)).ToList().ElementAt(0).Enterprise_Name; //根据找到的订单的企业编号查找企业的名称。(收货方)
-                        transpStatuTypes = transportList.ElementAt(j).Distribution_State;
-                        if (transpStatuTypes.ToString().Equals("DistributionCreated"))
-                        {
-                            tempTempTransportlist.status = DistributionCreated;
-                        }
-                        else if (transpStatuTypes.ToString().Equals("Distributing"))
-                        {
-                            tempTempTransportlist.status = DistributionBeenSent;
-                        }
-                        else if (transpStatuTypes.ToString().Equals("Received"))
-                        {
-                            tempTempTransportlist.status = DistributionBeenReceived;
-                        }
-                        tempTransportList.Add(tempTempTransportlist);
+                        tempTempTransportlist.status = DistributionCreated;
                     }
+                    else if (transpStatuTypes.ToString().Equals("Distributing"))
+                    {
+                        tempTempTransportlist.status = DistributionBeenSent;
+                    }
+                    else if (transpStatuTypes.ToString().Equals("Received"))
+                    {
+                        tempTempTransportlist.status = DistributionBeenReceived;
+                    }
+                    tempTransportList.Add(tempTempTransportlist);
                 }
             }
             return tempTransportList;
         }
 
-        //通过物流单号获得当前的所有的订单
-        public List<TransportListDetailClass> GetTransportDetailByDistributionId(int distributionId)
+
+        //通过物流单号获得当前的物流详细信息
+        public TransportListDetailClass GetTransportDetailByDistributionId(int distributionId)
         {
-            var tempTransportDetailList = new List<TransportListDetailClass>();
             transportList = transportRep.LoadEntities((Distribution => Distribution.Distribution_ID
                 == distributionId)).ToList();
-            for (int i = 0; i < transportList.Count; i++)
-            {
-                var tempTempTransportDetail = new TransportListDetailClass();
-                tempTempTransportDetail.Created_Time = transportList.ElementAt(i).Created_Time; //
-                tempTempTransportDetail.Destination_Addr = transportList.ElementAt(i).Destination_Addr;
-                tempTempTransportDetail.Distribution_Amount = transportList.ElementAt(i).Distribution_Amount;
-                tempTempTransportDetail.Distribution_Content = transportList.ElementAt(i).Distribution_Content;
-                tempTempTransportDetail.Distribution_Download_Addr = transportList.ElementAt(i).Distribution_Download_Addr;
-                tempTempTransportDetail.Distribution_Name = transportList.ElementAt(i).Distribution_Name;
+            var tempTempTransportDetail = new TransportListDetailClass();
+            tempTempTransportDetail.Created_Time = transportList.ElementAt(0).Created_Time; //
+            tempTempTransportDetail.Destination_Addr = transportList.ElementAt(0).Destination_Addr;
+            tempTempTransportDetail.Distribution_Amount = transportList.ElementAt(0).Distribution_Amount;
+            tempTempTransportDetail.Distribution_Content = transportList.ElementAt(0).Distribution_Content;
+            tempTempTransportDetail.Distribution_Download_Addr = transportList.ElementAt(0).Distribution_Download_Addr;
+            //string tempAddress = transportList.ElementAt(0).Distribution_Download_Addr;
+            ////tempAddress = tempAddress.Substring(0, tempAddress.LastIndexOf(".pdf"));
+            //tempAddress = tempAddress.Replace("/","999999999");
+            //tempAddress = tempAddress.Replace(".","aaaswqedfaaa");
+            //tempTempTransportDetail.Distribution_Download_Addr = tempAddress;
+            tempTempTransportDetail.Distribution_Name = transportList.ElementAt(0).Distribution_Name;
 
-                transpStatuTypes = transportList.ElementAt(i).Distribution_State;
-                // int lastStatus = (int)transportList.LastOrDefault().Distribution_State;
-                if (transpStatuTypes.ToString().Equals("DistributionCreated"))
-                {
-                    tempTempTransportDetail.Distribution_State = DistributionCreated;
-                }
-                else if (transpStatuTypes.ToString().Equals("Distributing"))
-                {
-                    tempTempTransportDetail.Distribution_State = DistributionBeenSent;
-                }
-                else if (transpStatuTypes.ToString().Equals("Received"))
-                {
-                    tempTempTransportDetail.Distribution_State = DistributionBeenReceived;
-                }
-                tempTempTransportDetail.distributionId = transportList.ElementAt(i).Distribution_ID;
-                tempTempTransportDetail.Receive_Time = transportList.ElementAt(i).Receive_Time;
-                tempTempTransportDetail.Send_Time = transportList.ElementAt(i).Send_Time;
-                tempTempTransportDetail.Source_Addr = transportList.ElementAt(i).Source_Addr;
-                tempTransportDetailList.Add(tempTempTransportDetail);
+            transpStatuTypes = transportList.ElementAt(0).Distribution_State;
+            if (transpStatuTypes.ToString().Equals("DistributionCreated"))
+            {
+                tempTempTransportDetail.Distribution_State = DistributionCreated;
             }
-            return tempTransportDetailList;
+            else if (transpStatuTypes.ToString().Equals("Distributing"))
+            {
+                tempTempTransportDetail.Distribution_State = DistributionBeenSent;
+            }
+            else if (transpStatuTypes.ToString().Equals("Received"))
+            {
+                tempTempTransportDetail.Distribution_State = DistributionBeenReceived;
+            }
+            tempTempTransportDetail.distributionId = transportList.ElementAt(0).Distribution_ID;
+            tempTempTransportDetail.Receive_Time = transportList.ElementAt(0).Receive_Time;
+            tempTempTransportDetail.Send_Time = transportList.ElementAt(0).Send_Time;
+            tempTempTransportDetail.Source_Addr = transportList.ElementAt(0).Source_Addr;
+            return tempTempTransportDetail;
         }
 
-        //通过供货企业获得当前的订单号
-        public List<providerEnterpriseOrderClass> GetOrderIdByProviderEnterpriseid(int providerEnterpriseId, int orderState)
+        //通过供货企业获得当前的他所有的接收到的订单号，即需要发货的订单号
+        public List<providerEnterpriseOrderClass> GetOrderIdByProviderEnterpriseid(int providerEnterpriseId)
         {
             var tempProviderEnterpriseList = new List<providerEnterpriseOrderClass>();
             orderList = orderRep.LoadEntities((Order => Order.ProviderEnterprise_ID == providerEnterpriseId)).ToList();
-            for (int i = 0; i < orderList.Count; i++)
+            for (int i = orderList.Count - 1; i >= 0; i--)
             {
                 orderStatuList = orderStatuRep.LoadEntities((OrderStatus => OrderStatus.Order_ID
                     == orderList.ElementAt(i).Order_ID)).ToList(); //获得当前的订单状态      
@@ -244,34 +219,37 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
             return tempProviderEnterpriseList;
         }
 
+        //通过搜索获得当前页面的被搜索内容的订单号
         public List<TransportListClass> GetTransportBySearch(int companyId, int category, string keywords)
         {
             //GetTransportLists(int companyId, int category)
             var templist = GetTransportLists(companyId, category);
             var temp_GetList = new List<TransportListClass>();
+            string enterpriseName = "";
+            // int tempKeywords = int.Parse(keywords);
+            //  if()
+
             foreach (var temp in templist)
             {
+                //string num = temp.TransportNumber;
+                //string sta = (temp.status).ToString();
+                //string id = Convert.ToString(temp.distributionId);
                 if (category == 1)
                 {
-                    if ((temp.TransportNumber).ToString().Contains(keywords)
-                        || (temp.consignee).ToString().Contains(keywords)
-                        || (temp.status).ToString().Contains(keywords))
-                    {
-                        var temp_new = new TransportListClass();
-                        temp_new = temp;
-                        temp_GetList.Add(temp_new);
-                    }
+                    enterpriseName = (temp.consignee).ToString();
                 }
                 else if (category == 0)
                 {
-                    if ((temp.TransportNumber).ToString().Contains(keywords)
-                        || (temp.consignor).ToString().Contains(keywords)
-                        || (temp.status).ToString().Contains(keywords))
-                    {
-                        var temp_new = new TransportListClass();
-                        temp_new = temp;
-                        temp_GetList.Add(temp_new);
-                    }
+                    enterpriseName = (temp.consignor).ToString();
+                }
+                //(temp.TransportNumber).ToString().Contains(keywords)|| 
+                if ((temp.status).ToString().Contains(keywords)
+                    || enterpriseName.Contains(keywords)
+                    || Convert.ToString(temp.distributionId).Contains(keywords))
+                {
+                    var temp_new = new TransportListClass();
+                    temp_new = temp;
+                    temp_GetList.Add(temp_new);
                 }
             }
             return temp_GetList;
@@ -282,89 +260,97 @@ namespace MobileWebSite.BLL.OrderOperation.BLL
         //option 0 代表未完成的物流 1代表已完成的物流
         public int GetTransporationNum(int EnterpriseId, int category, int option)
         {
-            
-            if (category == 0)
+            var tempOrderList = new List<Order>();
+            int received = 0;
+            int notreceived = 0;
+            //if (category == 0)
+            //{
+            try
             {
-                int received = 0;
-                int notreceived = 0;
-                try
+                if (category == 0)
                 {
-                    var tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID
-                        == EnterpriseId).ToList();
-                    foreach (var tempTempOrder in tempOrderList)
+                    tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID
+                   == EnterpriseId).ToList();
+                }
+                else if (category == 1)
+                {
+                    tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID
+                    == EnterpriseId).ToList();
+                }
+                //var tempOrderList = orderRep.LoadEntities(Order => Order.ProviderEnterprise_ID
+                //    == EnterpriseId).ToList();
+                foreach (var tempTempOrder in tempOrderList)
+                {
+                    var tempTranspotList = transportRep.LoadEntities((
+                        Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
+                    foreach (var tempTempTranspot in tempTranspotList)
                     {
-                        var tempTranspotList = transportRep.LoadEntities((
-                            Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
-                        foreach (var tempTempTranspot in tempTranspotList)
+                        int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
+                        if (lastStatus == 2)
                         {
-                            int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
-                            if (lastStatus == 2)
-                            {
-                                received++;
-                            }
-                            else
-                            {
-                                notreceived++;
-                            }
+                            received++;
+                        }
+                        else
+                        {
+                            notreceived++;
                         }
                     }
-                    if (option == 0)
-                    {
-                        return notreceived;
-                    }
-                    else
-                    {
-                        return received;
-                    }
                 }
-                catch (System.Exception ex)
+                if (option == 0)
                 {
-                    return 0;
+                    return notreceived;
+                }
+                else
+                {
+                    return received;
                 }
             }
-            else if (category == 1)
-            {
-                int received = 0;
-                int notreceived = 0;
-                try
-                {
-                    var tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID
-                        == EnterpriseId).ToList();
-                    foreach (var tempTempOrder in tempOrderList)
-                    {
-                        var tempTranspotList = transportRep.LoadEntities((
-                            Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
-                        foreach (var tempTempTranspot in tempTranspotList)
-                        {
-                            int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
-                            if (lastStatus == 2)
-                            {
-                                received++;
-                            }
-                            else
-                            {
-                                notreceived++;
-                            }
-                        }
-                    }
-                    if (option == 0)
-                    {
-                        return notreceived;
-                    }
-                    else
-                    {
-                        return received;
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    return 0;
-                }
-            }
-            else
+            catch (System.Exception ex)
             {
                 return 0;
             }
+            //}
+            //else if (category == 1)
+            //{
+            //    try
+            //    {
+            //        var tempOrderList = orderRep.LoadEntities(Order => Order.PublisherEnterprise_ID
+            //            == EnterpriseId).ToList();
+            //        foreach (var tempTempOrder in tempOrderList)
+            //        {
+            //            var tempTranspotList = transportRep.LoadEntities((
+            //                Distribution => Distribution.Order_ID == tempTempOrder.Order_ID)).ToList();
+            //            foreach (var tempTempTranspot in tempTranspotList)
+            //            {
+            //                int lastStatus = (int)tempTranspotList.LastOrDefault().Distribution_State;
+            //                if (lastStatus == 2)
+            //                {
+            //                    received++;
+            //                }
+            //                else
+            //                {
+            //                    notreceived++;
+            //                }
+            //            }
+            //        }
+            //        if (option == 0)
+            //        {
+            //            return notreceived;
+            //        }
+            //        else
+            //        {
+            //            return received;
+            //        }
+            //    }
+            //    catch (System.Exception ex)
+            //    {
+            //        return 0;
+            //    }
+            //}
+            //else
+            //{
+            //    return 0;
+            //}
         }
     }
 }
